@@ -3,6 +3,8 @@ import sklearn.datasets as ds
 from sklearn.cross_decomposition import CCA
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
+from utils import *
+import pandas as pd
 
 
 class GeneralizedCCA:
@@ -187,12 +189,57 @@ class GeneralizedCCA:
         return X
 
 
-    def cal_correlation(self):
+    def cal_correlation(self, rank=True):
         # print (123)
-        return np.corrcoef(np.concatenate(self.list_projection, axis=1), rowvar=False)
+        def rank_corr(corr_array):
+            D = int(corr_array.shape[0] / 2)
+            res = []
+            for i in range(D):
+                res.append(corr_array[i][i + D])
+            return res
+
+        corr_array = np.corrcoef(np.concatenate(self.list_projection, axis=1), rowvar=False)
+        return rank_corr(corr_array)
 
     def cal_r2_score(self):
         return r2_score(self.list_projection[0], self.list_projection[1]), r2_score(self.list_projection[1], self.list_projection[0])
+
+    def cal_average_precision(self, list_projection):
+        '''
+        list_projection: [(N, D), (N, D) ... ]
+        '''
+
+        v1 = list_projection[0]
+        v2 = list_projection[1]
+
+        N = v1.shape[0]
+
+        precision = 0
+        for i in range(N):
+            temp = []
+            for j in range(N):
+                dist = np.sum((v1[i] - v2[j]) ** 2)
+                temp.append((dist, j))
+            temp = sorted(temp, key=lambda x: x[0], reverse=True)  # least distance is the best
+
+            index = None
+            for it, t in enumerate(temp):
+                if t[1] == i:
+                    index = it
+                    break
+            # print (index)
+            precision += float(index + 1) / N
+        precision /= N
+        return precision
+
+    def transform(self, v1, v2):
+        '''
+        :param v1: (N, D)
+        :param v2:
+        :return:
+        '''
+        U1, U2 = self.list_U
+        return v1.dot(U1), v2.dot(U2)
 
     def predict(self, X):
         '''
@@ -214,7 +261,7 @@ class data_generate:
         self.y_std = None
 
         self.origin_train_data = None
-        self.train_data = None
+        self.train_data = None  # [(D, N), (D, N) ... ]
         self.test_data = None
 
     def generate_boston(self, normalize=True):
@@ -232,6 +279,81 @@ class data_generate:
         self.train_data = [X_train.T, y_train.reshape((-1, 1)).T]
         self.test_data = [X_test.T, y_test.reshape((-1, 1)).T]
 
+    def generate_mnist(self):
+        data1 = load_data('noisymnist_view1.gz', 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view1.gz')
+        data2 = load_data('noisymnist_view2.gz', 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view2.gz')
+        x_train1 = data1[0][0]
+        y_train1 = data1[0][1]
+        x_test1 = data1[2][0]
+        y_test1 = data1[2][1]
+
+        x_train2 = data2[0][0]
+        y_train2 = data2[0][1]
+        x_test2 = data2[2][0]
+        y_test2 = data2[2][1]
+
+        self.origin_train_data = [x_train1.T, x_train2.T]
+
+
+        self.train_data = [x_train1.T, x_train2.T]
+        self.test_data = [x_test1.T, x_test2.T]
+        self.mnist_train_label = y_train1
+        self.mnist_test_label = y_test1
+
+    def generate_mnist_x_y_acc(self):
+        data1 = load_data('noisymnist_view1.gz', 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view1.gz')
+        x_train1 = data1[0][0]
+        y_train1 = data1[0][1]
+        x_test1 = data1[2][0]
+        y_test1 = data1[2][1]
+
+        # dummy target data
+        y_train = pd.get_dummies(y_train1).values
+        y_test = pd.get_dummies(y_test1).values
+
+        self.origin_train_data = [y_train1.T, y_test1.T]
+
+        self.train_data = [x_train1.T, y_train.T]
+        self.test_data = [x_test1.T, y_test.T]
+
+    def generate_mnist_half(self):
+        data1 = load_data('noisymnist_view1.gz', 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view1.gz')
+        data2 = load_data('noisymnist_view2.gz', 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view2.gz')
+
+        x_train = data1[0][0]
+        y_train = data1[0][1]
+        x_test = data1[2][0]
+        y_test = data1[2][1]
+
+        def _cut_half(X):
+            # X = X[:6000, :]
+            # X = (X - np.mean(X)) / np.std(X)
+
+            N = X.shape[0]
+            X = X.reshape((N, 28, 28))
+            left = X[:, :, :14]
+            right = X[:, :, 14:]
+            return left.reshape((N, -1)).T, right.reshape((N, -1)).T
+
+        self.train_data = _cut_half(x_train)
+        self.test_data = _cut_half(x_test)
+
+    def en_es_fr(self, row = 800, normalize = False):
+        if row == 800:
+            v1 = pd.read_csv("csv_data/en800data.csv", encoding = "ISO-8859-1").values
+            v2 = pd.read_csv("csv_data/es800data.csv", encoding = "ISO-8859-1").values
+        else:
+            v1 = pd.read_csv("csv_data/en1000data.csv", encoding = "ISO-8859-1").values
+            v2 = pd.read_csv("csv_data/fr1000data.csv", encoding = "ISO-8859-1").values
+
+        if normalize:
+            self._center_norm(v1, v2)
+        v1_train, v1_test, v2_train, v2_test = train_test_split(v1, v2, test_size = 0.8, random_state = 42)
+
+        self.train_data = [v1_train.T, v2_train.T]
+        self.test_data = [v1_test.T, v2_test.T]
+
+
     def _center_norm(self, X, y):
         N = X.shape[0]
 
@@ -248,11 +370,15 @@ class data_generate:
         return X, y
 
 if __name__ == "__main__":
-    # generate data
+    # generate boston data
     dg = data_generate()
-    dg.generate_boston()
+    # dg.generate_boston()
+    # dg.generate_mnist(normalize=False)
+    # dg.generate_mnist_half()
+    dg.en_es_fr(800)
 
-    gcca = GeneralizedCCA(ds=dg, m_rank=1)
+    gcca = GeneralizedCCA(ds=dg, m_rank=50)
     # gcca.solve_u()
-    gcca.solve_u_linearized_bregman(verbose=False)
+    # gcca.solve_u_linearized_bregman(verbose=True)
+    gcca.solve_u()
     print(gcca.cal_correlation())
