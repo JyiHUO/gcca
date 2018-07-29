@@ -5,6 +5,7 @@ from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 from utils import *
 import pandas as pd
+import scipy.io as sco
 
 
 class GeneralizedCCA:
@@ -157,7 +158,7 @@ class GeneralizedCCA:
         # initialize parameter
         error_x = 1
         epsilon = 1e-5
-        delta = 0.9
+        delta = 0.5
         tau = 1
         mu_x = 5
         Numit_x = 0
@@ -204,6 +205,12 @@ class GeneralizedCCA:
     def cal_r2_score(self):
         return r2_score(self.list_projection[0], self.list_projection[1]), r2_score(self.list_projection[1], self.list_projection[0])
 
+    def cal_spare(self):
+        res = []
+        for u in self.list_U:
+            res.append(np.sum(u == 0) / (u.shape[0] * u.shape[1]))
+        return res
+
     def cal_average_precision(self, list_projection):
         '''
         list_projection: [(N, D), (N, D) ... ]
@@ -231,6 +238,40 @@ class GeneralizedCCA:
             precision += float(index + 1) / N
         precision /= N
         return precision
+
+    def cal_acc(self, list_projection):
+        v1 = list_projection[0]
+        v2 = list_projection[1]
+
+        N = v1.shape[0]
+
+        precision = 0
+
+        # some pre for y
+        label = set()
+        for arr in v2:
+            label.add(tuple(arr))
+
+        label = list(label)
+        res = []
+        for arr in v2:
+            for i, t in enumerate(label):
+                if tuple(arr) == t:
+                    res.append(i)
+                    break
+        c = 0
+        for i in range(N):
+            temp = []
+            for j in range(N):
+                dist = np.sum((v1[i] - v2[j]) ** 2)
+                temp.append((dist, j))
+            temp = sorted(temp, key=lambda x: x[0])
+            for iz, z in enumerate(label):
+                tt = tuple(v2[temp[0][1]])
+                if tt == z:
+                    if iz == res[i]:
+                        c += 1
+        return float(c) / N
 
     def transform(self, v1, v2):
         '''
@@ -269,7 +310,7 @@ class data_generate:
         X = boston.data
         y = boston.target
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1,random_state=10)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.6,random_state=10)
 
         self.origin_train_data = [X_train.T, y_train.reshape((-1, 1)).T]
 
@@ -353,6 +394,29 @@ class data_generate:
         self.train_data = [v1_train.T, v2_train.T]
         self.test_data = [v1_test.T, v2_test.T]
 
+    def generate_genes_data(self,num=0, normalize=False):
+        Srbct = sco.loadmat("genes_data/Srbct.mat")
+        Leukemia = sco.loadmat("genes_data/Leukemia.mat")
+        Lymphoma = sco.loadmat("genes_data/Lymphoma.mat")
+        Prostate = sco.loadmat("genes_data/Prostate.mat")
+
+        data = [Srbct, Leukemia, Lymphoma, Prostate]
+
+        v1 = data[num]["fea"]
+        v2 = pd.get_dummies(data[num]["gnd"].reshape((-1))).values
+
+        print(v1.shape)
+        print(v2.shape)
+
+        self.origin_train_data = [v1, data[num]["gnd"].reshape((-1))]
+        if normalize:
+            v1, v2 = self._center_norm(v1, v2)
+
+        v1_train, v1_test, v2_train, v2_test = train_test_split(v1, v2, test_size=0.6, random_state=42)
+
+        self.train_data = [v1_train.T, v2_train.T]
+        self.test_data = [v1_test.T, v2_test.T]
+
 
     def _center_norm(self, X, y):
         N = X.shape[0]
@@ -375,10 +439,16 @@ if __name__ == "__main__":
     # dg.generate_boston()
     # dg.generate_mnist(normalize=False)
     # dg.generate_mnist_half()
-    dg.en_es_fr(800)
+    # dg.en_es_fr(800)
+    dg.generate_genes_data(num=3)
 
-    gcca = GeneralizedCCA(ds=dg, m_rank=50)
+    gcca = GeneralizedCCA(ds=dg, m_rank=2)
     # gcca.solve_u()
-    # gcca.solve_u_linearized_bregman(verbose=True)
-    gcca.solve_u()
+    gcca.solve_u_linearized_bregman(verbose=True)
     print(gcca.cal_correlation())
+    print(gcca.cal_acc(gcca.list_projection))
+    print(gcca.cal_acc(gcca.transform(dg.test_data[0].T, dg.test_data[1].T)))
+    print(gcca.cal_spare())
+    print(np.mean(gcca.cal_spare()))
+    print("训练集：", dg.train_data[0].shape)
+    print("测试集：", dg.test_data[1].shape)
