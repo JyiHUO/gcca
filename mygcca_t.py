@@ -395,10 +395,10 @@ class data_generate:
         self.test_data = [v1_test.T, v2_test.T]
 
     def generate_genes_data(self,num=0, normalize=False):
-        Srbct = sco.loadmat("genes_data/Srbct.mat")
-        Leukemia = sco.loadmat("genes_data/Leukemia.mat")
-        Lymphoma = sco.loadmat("genes_data/Lymphoma.mat")
-        Prostate = sco.loadmat("genes_data/Prostate.mat")
+        Srbct = sco.loadmat("../gcca_data/genes_data/Srbct.mat")
+        Leukemia = sco.loadmat("../gcca_data/genes_data/Leukemia.mat")
+        Lymphoma = sco.loadmat("../gcca_data/genes_data/Lymphoma.mat")
+        Prostate = sco.loadmat("../gcca_data/genes_data/Prostate.mat")
 
         data = [Srbct, Leukemia, Lymphoma, Prostate]
 
@@ -440,11 +440,11 @@ if __name__ == "__main__":
     # dg.generate_mnist(normalize=False)
     # dg.generate_mnist_half()
     # dg.en_es_fr(800)
-    dg.generate_genes_data(num=3)
+    dg.generate_genes_data(num=0)
 
     gcca = GeneralizedCCA(ds=dg, m_rank=2)
-    # gcca.solve_u()
-    gcca.solve_u_linearized_bregman(verbose=True)
+    gcca.solve_u()
+    # gcca.solve_u_linearized_bregman(verbose=True)
     print(gcca.cal_correlation())
     print(gcca.cal_acc(gcca.list_projection))
     print(gcca.cal_acc(gcca.transform(dg.test_data[0].T, dg.test_data[1].T)))
