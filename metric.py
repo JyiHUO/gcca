@@ -37,13 +37,13 @@ class metric:
             res.append(np.sum(u == 0) / (u.shape[0] * u.shape[1]))
         return res
 
-    def cal_average_precision(self):
+    def cal_average_precision(self, list_projection):
         '''
         list_projection: [(N, D), (N, D) ... ]
         '''
 
-        v1 = self.list_projection[0]
-        v2 = self.list_projection[1]
+        v1 = list_projection[0]
+        v2 = list_projection[1]
 
         N = v1.shape[0]
 
@@ -65,9 +65,9 @@ class metric:
         precision /= N
         return precision
 
-    def cal_acc(self):
-        v1 = self.list_projection[0]
-        v2 = self.list_projection[1]
+    def cal_acc(self, list_projection):
+        v1 = list_projection[0]
+        v2 = list_projection[1]
 
         N = v1.shape[0]
 

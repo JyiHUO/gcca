@@ -85,7 +85,7 @@ class gcca(metric):
 
 
 
-    def solve_u(self):
+    def solve(self):
         number_of_views = len(self.list_view)
 
         # cal G
@@ -105,23 +105,28 @@ class gcca(metric):
 
 
 if __name__ == "__main__":
+
+    # read some data
     # generate boston data
-    dg = data_generate()
+    data = data_generate()
     # dg.generate_boston()
     # dg.generate_mnist(normalize=False)
     # dg.generate_mnist_half()
     # dg.en_es_fr(800)
-    dg.generate_genes_data(num=0)
+    data.generate_genes_data(num=0)
     # dg.generate_twitter_dataset()
-    print("finish reading data")
 
-    gcca = gcca(ds=dg, m_rank=250)
-    # gcca.solve_u()
-    gcca.solve_u()
-    # print(gcca.cal_correlation())
-    # print(gcca.cal_acc(gcca.list_projection))
-    # print(gcca.cal_acc(gcca.transform(dg.test_data[0].T, dg.test_data[1].T)))
-    print(gcca.cal_spare())
-    print(np.mean(gcca.cal_spare()))
-    print("训练集：", dg.train_data[0].shape)
-    print("测试集：", dg.test_data[1].shape)
+    print()
+    print("finish reading data")
+    print()
+
+    # train gcca model
+    clf = gcca(ds=data, m_rank=2)
+    clf.solve()
+
+    # calculate all kind of metric
+    print("total correlation is: ", np.mean(clf.cal_correlation()))
+    print("training data ACC is: ", clf.cal_acc(clf.list_projection))
+    print("testing data ACC is: ", clf.cal_acc(clf.transform(data.test_data[0].T, data.test_data[1].T)))
+    print("each view's spare of U is ", clf.cal_spare())
+    print("total sqare is: ", clf.cal_spare()[0])

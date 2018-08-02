@@ -2,14 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="00d6fd14-4978-4324-b9eb-779fcf1409ba" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cca.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/data_class.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/metric.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/origin_gcca.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/mygcca_t.py" afterPath="$PROJECT_DIR$/spare_gcca.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/try_result_std.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/export .ipynb" afterPath="$PROJECT_DIR$/export .ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/export_800.ipynb" afterPath="$PROJECT_DIR$/export_800.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cca.py" afterPath="$PROJECT_DIR$/cca.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data_class.py" afterPath="$PROJECT_DIR$/data_class.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/metric.py" afterPath="$PROJECT_DIR$/metric.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/origin_gcca.py" afterPath="$PROJECT_DIR$/origin_gcca.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/record.ipynb" afterPath="$PROJECT_DIR$/record.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spare_gcca.py" afterPath="$PROJECT_DIR$/spare_gcca.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -20,13 +20,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="spare_gcca.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="spare_gcca.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/spare_gcca.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="177" column="16" lean-forward="false" selection-start-line="177" selection-start-column="16" selection-end-line="177" selection-end-column="16" />
+            <state relative-caret-position="88">
+              <caret line="187" column="40" lean-forward="true" selection-start-line="187" selection-start-column="40" selection-end-line="187" selection-end-column="40" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="try_result_std.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/try_result_std.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="353">
+              <caret line="40" column="0" lean-forward="true" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#25#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -35,8 +47,8 @@
       <file leaf-file-name="origin_gcca.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/origin_gcca.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="106" column="0" lean-forward="false" selection-start-line="106" selection-start-column="0" selection-end-line="126" selection-end-column="40" />
+            <state relative-caret-position="388">
+              <caret line="121" column="0" lean-forward="true" selection-start-line="121" selection-start-column="0" selection-end-line="121" selection-end-column="0" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -47,8 +59,8 @@
       <file leaf-file-name="cca.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cca.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1166">
-              <caret line="53" column="26" lean-forward="false" selection-start-line="53" selection-start-column="26" selection-end-line="53" selection-end-column="26" />
+            <state relative-caret-position="181">
+              <caret line="43" column="33" lean-forward="true" selection-start-line="43" selection-start-column="33" selection-end-line="43" selection-end-column="33" />
               <folding>
                 <element signature="e#0#43#0" expanded="true" />
               </folding>
@@ -59,8 +71,8 @@
       <file leaf-file-name="metric.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/metric.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="770">
-              <caret line="35" column="28" lean-forward="false" selection-start-line="35" selection-start-column="22" selection-end-line="35" selection-end-column="28" />
+            <state relative-caret-position="1381">
+              <caret line="69" column="13" lean-forward="false" selection-start-line="69" selection-start-column="13" selection-end-line="69" selection-end-column="13" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -68,11 +80,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="data_class.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="data_class.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data_class.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3652">
-              <caret line="166" column="24" lean-forward="true" selection-start-line="166" selection-start-column="24" selection-end-line="166" selection-end-column="24" />
+            <state relative-caret-position="1163">
+              <caret line="117" column="10" lean-forward="false" selection-start-line="117" selection-start-column="10" selection-end-line="117" selection-end-column="10" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -105,15 +117,17 @@
         <option value="$PROJECT_DIR$/../teacher_matlab/代码/process_sentence.py" />
         <option value="$PROJECT_DIR$/mygcca_t.py" />
         <option value="$PROJECT_DIR$/gcca_origin.py" />
-        <option value="$PROJECT_DIR$/origin_gcca.py" />
+        <option value="$PROJECT_DIR$/cca.py" />
         <option value="$PROJECT_DIR$/metric.py" />
+        <option value="$PROJECT_DIR$/test_result_std.py" />
+        <option value="$PROJECT_DIR$/origin_gcca.py" />
         <option value="$PROJECT_DIR$/spare_gcca.py" />
         <option value="$PROJECT_DIR$/data_class.py" />
-        <option value="$PROJECT_DIR$/cca.py" />
+        <option value="$PROJECT_DIR$/try_result_std.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="319" />
     <option name="y" value="89" />
     <option name="width" value="1547" />
@@ -165,7 +179,22 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.cca">
+  <component name="RunManager" selected="Python.mygcca_t">
+    <configuration name="Nosetests for try_result_std.py" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="gcca" />
+      <option name="_new_regexPattern" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;try_result_std.py&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+    </configuration>
     <configuration name="cca" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -179,23 +208,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="gcca" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cca.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
-    <configuration name="data_class" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="gcca" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data_class.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -234,37 +246,37 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
-    <configuration name="process_sentence" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="test_result_std" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../teacher_matlab/代码" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="gcca" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../teacher_matlab/代码/process_sentence.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/try_result_std.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.mygcca_t" />
-      <item index="1" class="java.lang.String" itemvalue="Python.process_sentence" />
-      <item index="2" class="java.lang.String" itemvalue="Python.origin_gcca" />
-      <item index="3" class="java.lang.String" itemvalue="Python.data_class" />
-      <item index="4" class="java.lang.String" itemvalue="Python.cca" />
+      <item index="1" class="java.lang.String" itemvalue="Python.origin_gcca" />
+      <item index="2" class="java.lang.String" itemvalue="Python.cca" />
+      <item index="3" class="java.lang.String" itemvalue="Python tests.Nosetests for try_result_std.py" />
+      <item index="4" class="java.lang.String" itemvalue="Python.test_result_std" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.cca" />
-        <item index="1" class="java.lang.String" itemvalue="Python.data_class" />
-        <item index="2" class="java.lang.String" itemvalue="Python.mygcca_t" />
+        <item index="0" class="java.lang.String" itemvalue="Python.mygcca_t" />
+        <item index="1" class="java.lang.String" itemvalue="Python.test_result_std" />
+        <item index="2" class="java.lang.String" itemvalue="Python tests.Nosetests for try_result_std.py" />
         <item index="3" class="java.lang.String" itemvalue="Python.origin_gcca" />
-        <item index="4" class="java.lang.String" itemvalue="Python.process_sentence" />
+        <item index="4" class="java.lang.String" itemvalue="Python.cca" />
       </list>
     </recent_temporary>
   </component>
@@ -281,14 +293,19 @@
     </task>
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="Nosetests_for_test_result_std_test_times - 2018.08.02 at 16h 36m 17s.xml">
+      <configuration name="Nosetests for test_result_std.test_times" configurationId="tests" />
+    </history-entry>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="319" y="89" width="1857" height="1092" extended-state="6" />
+    <frame x="319" y="89" width="1857" height="1092" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.122719735" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39581153" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.58743453" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28900525" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -466,26 +483,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/spare_gcca.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="177" column="16" lean-forward="false" selection-start-line="177" selection-start-column="16" selection-end-line="177" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/origin_gcca.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="106" column="0" lean-forward="false" selection-start-line="106" selection-start-column="0" selection-end-line="126" selection-end-column="40" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/anaconda2/envs/gpu/lib/python3.6/site-packages/sklearn/cross_decomposition/pls_.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="183">
@@ -496,8 +493,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cca.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1166">
-          <caret line="53" column="26" lean-forward="false" selection-start-line="53" selection-start-column="26" selection-end-line="53" selection-end-column="26" />
+        <state relative-caret-position="181">
+          <caret line="43" column="33" lean-forward="true" selection-start-line="43" selection-start-column="33" selection-end-line="43" selection-end-column="33" />
           <folding>
             <element signature="e#0#43#0" expanded="true" />
           </folding>
@@ -506,8 +503,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/metric.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="770">
-          <caret line="35" column="28" lean-forward="false" selection-start-line="35" selection-start-column="22" selection-end-line="35" selection-end-column="28" />
+        <state relative-caret-position="1381">
+          <caret line="69" column="13" lean-forward="false" selection-start-line="69" selection-start-column="13" selection-end-line="69" selection-end-column="13" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
@@ -516,8 +513,38 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/data_class.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3652">
-          <caret line="166" column="24" lean-forward="true" selection-start-line="166" selection-start-column="24" selection-end-line="166" selection-end-column="24" />
+        <state relative-caret-position="1163">
+          <caret line="117" column="10" lean-forward="false" selection-start-line="117" selection-start-column="10" selection-end-line="117" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/try_result_std.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="353">
+          <caret line="40" column="0" lean-forward="true" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/origin_gcca.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="388">
+          <caret line="121" column="0" lean-forward="true" selection-start-line="121" selection-start-column="0" selection-end-line="121" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/spare_gcca.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="187" column="40" lean-forward="true" selection-start-line="187" selection-start-column="40" selection-end-line="187" selection-end-column="40" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

@@ -112,7 +112,7 @@ class spare_gcca(metric):
 
 
 
-    def solve_u_linearized_bregman(self, verbose = True):
+    def solve(self, verbose = False):
         # cal G
         self.solve_g()
         self.G = self.G.T
@@ -178,24 +178,35 @@ class spare_gcca(metric):
         return X
 
 
+
+
 if __name__ == "__main__":
+    # read some data
     # generate boston data
-    dg = data_generate()
+    data = data_generate()
     # dg.generate_boston()
     # dg.generate_mnist(normalize=False)
     # dg.generate_mnist_half()
     # dg.en_es_fr(800)
-    dg.generate_genes_data(num=0)
-    # dg.generate_twitter_dataset()
-    print("finish reading data")
 
-    gcca = spare_gcca(ds=dg, m_rank=2)
-    # gcca.solve_u()
-    gcca.solve_u_linearized_bregman(verbose=True)
-    # print(gcca.cal_correlation())
-    # print(gcca.cal_acc(gcca.list_projection))
-    # print(gcca.cal_acc(gcca.transform(dg.test_data[0].T, dg.test_data[1].T)))
-    print(gcca.cal_spare())
-    print(np.mean(gcca.cal_spare()))
-    print("训练集：", dg.train_data[0].shape)
-    print("测试集：", dg.test_data[1].shape)
+    for i in range(6):
+        data.generate_genes_data(num=i)
+        # dg.generate_twitter_dataset()
+
+        print()
+        print("finish reading data")
+        print()
+
+        # train gcca model
+        gcca = spare_gcca(ds=data, m_rank=2)
+        gcca.solve(verbose=False)
+
+        # calculate all kind of metric
+        print("total correlation is: ", np.mean(gcca.cal_correlation()))
+        print("training data ACC is: ", gcca.cal_acc(gcca.list_projection))
+        print("testing data ACC is: ", gcca.cal_acc(gcca.transform(data.test_data[0].T, data.test_data[1].T)))
+        print("each view's spare of U is ", gcca.cal_spare())
+        print("total sqare is: ", gcca.cal_spare()[0])
+
+        print ()
+        print ()

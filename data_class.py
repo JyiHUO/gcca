@@ -106,25 +106,32 @@ class data_generate:
         self.train_data = [v1_train.T, v2_train.T]
         self.test_data = [v1_test.T, v2_test.T]
 
-    def generate_genes_data(self,num=0, normalize=False):
+    def generate_genes_data(self,num=0, normalize=False, random_state = 42):
         Srbct = sco.loadmat("../gcca_data/genes_data/Srbct.mat")
         Leukemia = sco.loadmat("../gcca_data/genes_data/Leukemia.mat")
         Lymphoma = sco.loadmat("../gcca_data/genes_data/Lymphoma.mat")
         Prostate = sco.loadmat("../gcca_data/genes_data/Prostate.mat")
+        Brain = sco.loadmat("../gcca_data/genes_data/Brain.mat")
+        Colon = sco.loadmat("../gcca_data/genes_data/Colon.mat")
 
-        data = [Srbct, Leukemia, Lymphoma, Prostate]
+        name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
+        # print(name[num])
+        data = [Srbct, Leukemia, Lymphoma, Prostate, Brain, Colon]
 
         v1 = data[num]["fea"]
         v2 = pd.get_dummies(data[num]["gnd"].reshape((-1))).values
 
-        print(v1.shape)
-        print(v2.shape)
 
         self.origin_train_data = [v1, data[num]["gnd"].reshape((-1))]
         if normalize:
             v1, v2 = self._center_norm([v1, v2])
 
-        v1_train, v1_test, v2_train, v2_test = train_test_split(v1, v2, test_size=0.6, random_state=42)
+        v1_train, v1_test, v2_train, v2_test = train_test_split(v1, v2, test_size=0.6, random_state=random_state)
+
+        # print ("- the shape of training data in view one is: ", v1_train.shape)
+        # print ("- the shape of training data in view two is: ", v2_train.shape)
+        # print("- the shape of testing data in view one is: ", v1_test.shape)
+        # print("- the shape of testing data in view two is: ", v1_test.shape)
 
         self.train_data = [v1_train.T, v2_train.T]
         self.test_data = [v1_test.T, v2_test.T]

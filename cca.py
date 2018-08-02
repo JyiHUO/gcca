@@ -43,7 +43,10 @@ if __name__ == "__main__":
     # dg.en_es_fr(800)
     dg.generate_genes_data(num=0)
     # dg.generate_twitter_dataset()
+
+    print()
     print("finish reading data")
+    print()
 
     cca = cca(ds=dg, m_rank=50)
     # gcca.solve_u()
