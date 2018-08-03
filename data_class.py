@@ -24,13 +24,13 @@ class data_generate:
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.6,random_state=10)
 
-        self.origin_train_data = [X_train.T, y_train.reshape((-1, 1)).T]
+        self.origin_train_data = [X_train, y_train.reshape((-1, 1))]
 
         if normalize:
             X_train, y_train = self._center_norm(X_train, y_train)
 
-        self.train_data = [X_train.T, y_train.reshape((-1, 1)).T]
-        self.test_data = [X_test.T, y_test.reshape((-1, 1)).T]
+        self.train_data = [X_train, y_train.reshape((-1, 1))]
+        self.test_data = [X_test, y_test.reshape((-1, 1))]
 
     def generate_mnist(self):
         data1 = load_data('noisymnist_view1.gz', 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view1.gz')
@@ -45,11 +45,11 @@ class data_generate:
         x_test2 = data2[2][0]
         y_test2 = data2[2][1]
 
-        self.origin_train_data = [x_train1.T, x_train2.T]
+        self.origin_train_data = [x_train1, x_train2]
 
 
-        self.train_data = [x_train1.T, x_train2.T]
-        self.test_data = [x_test1.T, x_test2.T]
+        self.train_data = [x_train1, x_train2]
+        self.test_data = [x_test1, x_test2]
         self.mnist_train_label = y_train1
         self.mnist_test_label = y_test1
 
@@ -64,10 +64,10 @@ class data_generate:
         y_train = pd.get_dummies(y_train1).values
         y_test = pd.get_dummies(y_test1).values
 
-        self.origin_train_data = [y_train1.T, y_test1.T]
+        self.origin_train_data = [y_train1, y_test1]
 
-        self.train_data = [x_train1.T, y_train.T]
-        self.test_data = [x_test1.T, y_test.T]
+        self.train_data = [x_train1, y_train]
+        self.test_data = [x_test1, y_test]
 
     def generate_mnist_half(self):
         data1 = load_data('noisymnist_view1.gz', 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view1.gz')
@@ -86,7 +86,7 @@ class data_generate:
             X = X.reshape((N, 28, 28))
             left = X[:, :, :14]
             right = X[:, :, 14:]
-            return left.reshape((N, -1)).T, right.reshape((N, -1)).T
+            return left.reshape((N, -1)), right.reshape((N, -1))
 
         self.train_data = _cut_half(x_train)
         self.test_data = _cut_half(x_test)
@@ -103,8 +103,8 @@ class data_generate:
             self._center_norm([v1, v2])
         v1_train, v1_test, v2_train, v2_test = train_test_split(v1, v2, test_size = 0.8, random_state = 42)
 
-        self.train_data = [v1_train.T, v2_train.T]
-        self.test_data = [v1_test.T, v2_test.T]
+        self.train_data = [v1_train, v2_train]
+        self.test_data = [v1_test, v2_test]
 
     def generate_genes_data(self,num=0, normalize=False, random_state = 42):
         Srbct = sco.loadmat("../gcca_data/genes_data/Srbct.mat")
@@ -124,7 +124,11 @@ class data_generate:
 
         self.origin_train_data = [v1, data[num]["gnd"].reshape((-1))]
         if normalize:
+            # v1, v2 = self._center_norm([v1, v2])
+            v1 = data[num]["fea"]
+            v2 = data[num]["gnd"]
             v1, v2 = self._center_norm([v1, v2])
+            v2 = pd.get_dummies(v2.reshape((-1))).values
 
         v1_train, v1_test, v2_train, v2_test = train_test_split(v1, v2, test_size=0.6, random_state=random_state)
 
@@ -133,8 +137,8 @@ class data_generate:
         # print("- the shape of testing data in view one is: ", v1_test.shape)
         # print("- the shape of testing data in view two is: ", v1_test.shape)
 
-        self.train_data = [v1_train.T, v2_train.T]
-        self.test_data = [v1_test.T, v2_test.T]
+        self.train_data = [v1_train, v2_train]
+        self.test_data = [v1_test, v2_test]
 
     def generate_twitter_dataset(self, views_to_keep=4, normalize=True):
         with open("../gcca_data/twitter/views.pickle", 'rb') as f:
@@ -153,10 +157,10 @@ class data_generate:
         if normalize:
             views = self._center_norm(views)
 
-        self.train_data = [v[:100, :].T for v in views]
-        self.train_data.append(train_label[:100, :].T)
-        self.test_data = [v[:100, :].T for v in views]
-        self.test_data.append(test_label[:100, :].T)
+        self.train_data = [v[:, :] for v in views]
+        self.train_data.append(train_label[:, :])
+        self.test_data = [v[:, :] for v in views]
+        self.test_data.append(test_label[:, :])
 
 
     def _center_norm(self, views):

@@ -7,7 +7,7 @@ from data_class import *
 class cca(metric):
     def __init__(self, ds, m_rank):
         super().__init__()
-        self.list_view = ds.train_data  # [(D, N), (D, N) ... ]
+        self.list_view = [dd.T for dd in ds.train_data]  # [(D, N), (D, N) ... ]
         self.ds = ds
         self.list_U = []  # save U for each view [(D, r), (D, r) ... ]
         self.list_projection = []  # save project data through U for each view [(N, r), (N, r) ... ]
@@ -23,7 +23,7 @@ class cca(metric):
 
         X_c, Y_c = clf.transform(v1.T, v2.T)
         self.list_projection = [X_c, Y_c]
-        self.list_U = [clf.x_weights_, clf.y_weights_]
+        self.list_U = [clf.x_rotations_, clf.y_rotations_]
 
     def transform(self, v1, v2):
         '''

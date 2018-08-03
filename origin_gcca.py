@@ -23,7 +23,7 @@ class gcca(metric):
         '''
 
         super().__init__()
-        self.list_view = ds.train_data  # [(D, N), (D, N) ... ]
+        self.list_view = [dd.T for dd in ds.train_data]  # [(D, N), (D, N) ... ]
         self.ds = ds
         self.m_rank = m_rank  # top_r
         self.G = None  # subspace
@@ -113,20 +113,20 @@ if __name__ == "__main__":
     # dg.generate_mnist(normalize=False)
     # dg.generate_mnist_half()
     # dg.en_es_fr(800)
-    data.generate_genes_data(num=0)
-    # dg.generate_twitter_dataset()
+    # data.generate_genes_data(num=0)
+    data.generate_twitter_dataset()
 
     print()
     print("finish reading data")
     print()
 
     # train gcca model
-    clf = gcca(ds=data, m_rank=2)
+    clf = gcca(ds=data, m_rank=250)
     clf.solve()
 
     # calculate all kind of metric
     print("total correlation is: ", np.mean(clf.cal_correlation()))
-    print("training data ACC is: ", clf.cal_acc(clf.list_projection))
-    print("testing data ACC is: ", clf.cal_acc(clf.transform(data.test_data[0].T, data.test_data[1].T)))
+    # print("training data ACC is: ", clf.cal_acc(clf.list_projection))
+    # print("testing data ACC is: ", clf.cal_acc(clf.transform(data.test_data[0].T, data.test_data[1].T)))
     print("each view's spare of U is ", clf.cal_spare())
     print("total sqare is: ", clf.cal_spare()[0])

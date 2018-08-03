@@ -16,16 +16,17 @@ class metric:
         self.list_U = []
         self.ds = None
 
-    def cal_correlation(self):
+    def cal_correlation(self, list_projection):
         # print (123)
         def rank_corr(corr_array):
             D = int(corr_array.shape[0] / 2)
             res = []
             for i in range(D):
-                res.append(corr_array[i][i + D])
+                if not np.isnan(corr_array[i][i + D]) :
+                    res.append(corr_array[i][i + D])
             return res
 
-        corr_array = np.corrcoef(np.concatenate(self.list_projection, axis=1), rowvar=False)
+        corr_array = np.corrcoef(np.concatenate(list_projection, axis=1), rowvar=False)
         return rank_corr(corr_array)
 
     def cal_r2_score(self):
@@ -34,7 +35,7 @@ class metric:
     def cal_spare(self):
         res = []
         for u in self.list_U:
-            res.append(np.sum(u == 0) / (u.shape[0] * u.shape[1]))
+            res.append(np.sum(np.abs(u) < 1e-5) / (u.shape[0] * u.shape[1]))
         return res
 
     def cal_average_precision(self, list_projection):
