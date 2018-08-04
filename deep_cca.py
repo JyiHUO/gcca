@@ -153,12 +153,13 @@ class deepcca(metric):
 
         return new_data
 
-    def transform(self, v1, v2):
+    def transform(self, list_view):
         '''
         :param v1: (N, D)
         :param v2:
         :return:
         '''
+        v1, v2 = list_view
         new_data = self.t_model(self.model, v1, v2, self.m_rank, apply_linear_cca=True)
         return new_data
 

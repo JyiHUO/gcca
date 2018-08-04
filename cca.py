@@ -25,12 +25,13 @@ class cca(metric):
         self.list_projection = [X_c, Y_c]
         self.list_U = [clf.x_rotations_, clf.y_rotations_]
 
-    def transform(self, v1, v2):
+    def transform(self, list_view):
         '''
         :param v1: (N, D)
         :param v2:
         :return:
         '''
+        v1, v2 = list_view
         X_c, Y_c = self.model.transform(v1, v2)
         return X_c, Y_c
 

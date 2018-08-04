@@ -80,6 +80,7 @@ class spare_gcca(metric):
         # Finally, return matrix G which has been computed from above
 
         self.G = G
+
         # return G  # (N, D_all or r)
 
     def cal_A_B(self):
@@ -105,7 +106,7 @@ class spare_gcca(metric):
             sigama = np.zeros((n, n))
             sigama[np.arange(n), np.arange(n)] = S[i]
             A[i] = A[i].T
-            B[i] = np.linalg.inv(sigama).dot(B[i].dot(self.G.T))
+            B[i] = np.linalg.inv(sigama).dot(B[i].dot(self.G))
 
         return A, B
 
@@ -115,7 +116,7 @@ class spare_gcca(metric):
     def solve(self, verbose = False):
         # cal G
         self.solve_g()
-        self.G = self.G.T
+        # self.G = self.G.T
 
         A, B = self.cal_A_B()
 

@@ -15,6 +15,8 @@ class metric:
         self.list_projection = []
         self.list_U = []
         self.ds = None
+        self.G = None
+        self.list_view = []
 
     def cal_correlation(self, list_projection):
         # print (123)
@@ -100,14 +102,32 @@ class metric:
                         c += 1
         return float(c) / N
 
-    def transform(self, v1, v2):
+    def solve_g(self):
+        pass
+
+    def cal_G_error(self, list_view, test = True):
+        res = 0
+
+        list_projection = self.transform(list_view)
+
+        if test:
+            self.list_view = [dd.T for dd in list_view]
+            self.solve_g()
+
+        for v in list_projection:
+            res += np.sum(np.mean(np.abs(v - self.G), axis=0))
+        return res
+
+    def transform(self,list_view):
         '''
         :param v1: (N, D)
         :param v2:
         :return:
         '''
-        U1, U2 = self.list_U
-        return v1.dot(U1), v2.dot(U2)
+        res = []
+        for i in range(len(self.list_U)):
+            res.append(list_view[i].dot(self.list_U[i]))
+        return res
 
     def predict(self, X):
         '''

@@ -81,6 +81,7 @@ class gcca(metric):
         # Finally, return matrix G which has been computed from above
 
         self.G = G
+
         # return G  # (N, D_all or r)
 
 

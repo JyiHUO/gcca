@@ -32,13 +32,13 @@ def t_std_gene_data(clf_, n = 10):
             clf.solve()
 
             # calculate all kind of metric
-            corr.append(np.mean(clf.cal_correlation()))
+            v1_test, v2_test = clf.transform(data.test_data)
+            corr.append(np.mean(clf.cal_correlation([v1_test, v2_test])))
             train_acc.append(clf.cal_acc(clf.list_projection))
-            test_acc.append(clf.cal_acc(clf.transform(data.test_data[0].T, data.test_data[1].T)))
+            test_acc.append(clf.cal_acc(clf.transform([v1_test, v2_test])))
             spare.append(clf.cal_spare()[0])
 
         print("std of correlation is: ", np.std(corr))
-        print(corr)
         print("std of train acc is: ", np.std(train_acc))
         print("std of test acc is: ", np.std(test_acc))
         print("std of spare is: ", np.std(spare))
@@ -63,7 +63,7 @@ def t_result_gene_data(clf_):
         clf.solve()
 
         # calculate all kind of metric
-        v1_test, v2_test = clf.transform(data.test_data[0], data.test_data[1])
+        v1_test, v2_test = clf.transform(data.test_data)
         print("total correlation in training data is: ", np.mean(clf.cal_correlation(clf.list_projection)))
         print("total correlation in testing data is: ", np.mean(clf.cal_correlation([v1_test, v2_test])))
         print("training data ACC is: ", clf.cal_acc(clf.list_projection))
@@ -88,12 +88,12 @@ def t_if_normalize_or_not(clf_):
             print("finish reading data: ", name[i])
             print()
 
-            # train gcca model
+            # train  model
             clf = clf_(ds=data, m_rank=2)
             clf.solve()
 
             # calculate all kind of metric
-            v1_test, v2_test = clf.transform(data.test_data[0], data.test_data[1])
+            v1_test, v2_test = clf.transform(data.test_data)
             print("total correlation in training data is: ", np.mean(clf.cal_correlation(clf.list_projection)))
             print("total correlation in testing data is: ", np.mean(clf.cal_correlation([v1_test, v2_test])))
             print("training data ACC is: ", clf.cal_acc(clf.list_projection))
@@ -104,6 +104,22 @@ def t_if_normalize_or_not(clf_):
             print()
             print()
 
+def t_three_view(clf_):
+    data = data_generate()
+
+    data.generate_three_view_tfidf_dataset()
+
+    clf = clf_(ds=data, m_rank=20)
+    clf.solve()
+
+    # calculate all kind of metric
+    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+    print("each view's spare of U is ", clf.cal_spare())
+    print("total sqare is: ", np.mean(clf.cal_spare()))
+
+    print()
+    print()
 
 
 if __name__ == "__main__":
@@ -113,22 +129,28 @@ if __name__ == "__main__":
     clf_list = [gcca, spare_gcca, cca, deepcca]
 
     # choose which model you want to use
-    clf_ = clf_list[3]  # gcca
+    clf_ = clf_list[1]  # gcca
 
-    print ("###################start testing result#####################")
-    print()
-    t_result_gene_data(clf_)
-    print("###################finish testing result#####################")
-    print()
+    # print ("###################start testing result#####################")
+    # print()
+    # t_result_gene_data(clf_)
+    # print("###################finish testing result#####################")
+    # print()
+    #
+    # print("###################start testing std#####################")
+    # print()
+    # t_std_gene_data(clf_)
+    # print("###################finish testing std#####################")
+    # print()
+    #
+    # print("###################start testing normalize or not#####################")
+    # print()
+    # t_if_normalize_or_not(clf_)
+    # print("###################finish testing normalize or not#####################")
+    # print()
 
-    print("###################start testing std#####################")
+    print("###################start testing three views or not#####################")
     print()
-    t_std_gene_data(clf_)
-    print("###################finish testing std#####################")
-    print()
-
-    print("###################start testing normalize or not#####################")
-    print()
-    t_if_normalize_or_not(clf_)
-    print("###################finish testing normalize or not#####################")
+    t_three_view(clf_)
+    print("###################finish testing three views or not#####################")
     print()
