@@ -106,7 +106,7 @@ class spare_gcca(metric):
             sigama = np.zeros((n, n))
             sigama[np.arange(n), np.arange(n)] = S[i]
             A[i] = A[i].T
-            B[i] = np.linalg.inv(sigama).dot(B[i].dot(self.G))
+            B[i] = np.linalg.pinv(sigama).dot(B[i].dot(self.G))
 
         return A, B
 

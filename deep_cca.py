@@ -68,7 +68,7 @@ class deepcca(metric):
 
         model = self.create_model(layer_sizes1, layer_sizes2, input_shape1, input_shape2,
                              learning_rate, reg_par, outdim_size, use_all_singular_values)
-        model.summary()
+        # model.summary()
         self.model = self.train_model(model, v1, v2, epoch_num, batch_size)
 
         self.list_projection = self.t_model(model, v1, v2, outdim_size, apply_linear_cca)
@@ -95,10 +95,10 @@ class deepcca(metric):
         # used dummy Y because labels are not used in the loss function
         model.fit([train_set_x1, train_set_x2], np.zeros(len(train_set_x1)),
                   batch_size=batch_size, epochs=epoch_num, shuffle=True,
-                  validation_data=([valid_set_x1, valid_set_x2], np.zeros(len(valid_set_x1))))
+                  validation_data=([valid_set_x1, valid_set_x2], np.zeros(len(valid_set_x1))), verbose=0)
 
         results = model.evaluate([valid_set_x1, valid_set_x2], np.zeros(len(valid_set_x1)), batch_size=batch_size,
-                                 verbose=1)
+                                 verbose=0)
         # print('loss on validation data: ', results)
         return model
 
