@@ -3,6 +3,7 @@ from spare_gcca import *
 from cca import *
 from deep_cca import *
 from wgcca import *
+from dgcca_format import *
 import numpy as np
 
 
@@ -141,7 +142,7 @@ def t_synthetic_data(clf_):
 
     data.generate_synthetic_dataset()
 
-    clf = clf_(ds=data, m_rank=20)
+    clf = clf_(ds=data, m_rank=2)
     clf.solve()
 
     # calculate all kind of metric
@@ -152,6 +153,7 @@ def t_synthetic_data(clf_):
 
     print()
     print()
+    return clf.cal_G_error(data.test_data, test=True)
 
 
 
@@ -159,22 +161,22 @@ if __name__ == "__main__":
     # change the model below you like
 
     # preserve all model in one list
-    clf_list = [gcca, spare_gcca, cca, deepcca, WeightedGCCA]
+    clf_list = [gcca, spare_gcca, cca, deepcca, WeightedGCCA, dgcca_]
 
     # choose which model you want to use
-    clf_ = clf_list[2]  # gcca
+    clf_ = clf_list[-1]  # gcca
 
     # print ("################### start testing result #####################")
     # print()
     # t_result_gene_data(clf_)
     # print("################### finish testing result #####################")
     # print()
-    #
-    print("################### start testing std #####################")
-    print()
-    t_std_gene_data(clf_)
-    print("################### finish testing std #####################")
-    print()
+
+    # print("################### start testing std #####################")
+    # print()
+    # t_std_gene_data(clf_)
+    # print("################### finish testing std #####################")
+    # print()
     #
     # print("################### start testing normalize or not #####################")
     # print()
@@ -182,11 +184,11 @@ if __name__ == "__main__":
     # print("################### finish testing normalize or not #####################")
     # print()
 
-    # print("################### start testing three views of language data #####################")
-    # print()
-    # t_three_view(clf_)
-    # print("################### finish testing three views of language data #####################")
-    # print()
+    print("################### start testing three views of language data #####################")
+    print()
+    t_three_view(clf_)
+    print("################### finish testing three views of language data #####################")
+    print()
 
     # print("###################start testing synthetic data #####################")
     # print()

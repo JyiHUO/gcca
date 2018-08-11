@@ -114,8 +114,15 @@ class metric:
             self.list_view = [dd.T for dd in list_view]
             self.solve_g()
 
-        for v in list_projection:
-            res += np.sum(np.mean(np.abs(v - self.G), axis=0))
+        p = np.array(np.concatenate([v[None, :, :] for v in list_projection], axis=0))
+        # for v in list_projection[1:]:
+        #     res += np.sum(np.mean(np.abs(v - self.G), axis=0))
+        self.G = np.array(self.G)
+
+        temp = self.G - p
+
+        res = np.linalg.norm((temp)**2)
+
         return res
 
     def transform(self,list_view):
