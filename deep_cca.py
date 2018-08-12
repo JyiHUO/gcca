@@ -20,7 +20,7 @@ from keras.regularizers import l2
 
 
 class deepcca(metric):
-    def __init__(self, ds, m_rank):
+    def __init__(self, ds, m_rank, batch_size = 50, epoch_num = 10, learning_rate = 1e-3):
         super().__init__()
         self.list_view = ds.train_data  # [(D, N), (D, N) ... ]
         self.ds = ds
@@ -29,6 +29,12 @@ class deepcca(metric):
         self.m_rank = m_rank
 
         self.model = None
+
+
+        # parameter you can tune
+        self.batch_size = batch_size
+        self.epoch_num = epoch_num
+        self.learning_rate = learning_rate
 
     def solve(self):
         # the path to save the final learned features
@@ -48,9 +54,9 @@ class deepcca(metric):
         layer_sizes2 = [1024, 1024, 1024, outdim_size]
 
         # the parameters for training the network
-        learning_rate = 1e-3
-        epoch_num = 10
-        batch_size = 50
+        learning_rate = self.learning_rate
+        epoch_num = self.epoch_num
+        batch_size = self.batch_size
 
         # the regularization parameter of the network
         # seems necessary to avoid the gradient exploding especially when non-saturating activations are used

@@ -7,7 +7,7 @@ import theano.tensor as T
 
 
 class dgcca_(metric):
-    def __init__(self, ds, m_rank):
+    def __init__(self, ds, m_rank, batchSize=40, epochs = 200):
         super().__init__()
         self.list_view = ds.train_data  # [np.float32(d) for d in ds.train_data]   # [(N, D), (N, D) ... ]
         self.ds = ds
@@ -16,6 +16,10 @@ class dgcca_(metric):
         self.m_rank = m_rank
 
         self.model = None
+
+        # parameter you can tune
+        self.batchSize = batchSize
+        self.epochs = epochs
 
     def solve(self):
         viewMlpStruct = [[v.shape[1], 10, 10, 10, self.m_rank] for v in self.list_view]  # Each view has single-hidden-layer MLP with slightly wider hidden layers
@@ -29,8 +33,8 @@ class dgcca_(metric):
         # Little bit of L2 regularization -- learning params from matlab synthetic experiments
         lparams = LearningParams(rcov=[0.01] * 3, viewWts=[1.0] * 3, l1=[0.0] * 3, l2=[5.e-4] * 3,
                                  optStr='{"type":"adam","params":{"adam_b1":0.1,"adam_b2":0.001}}',
-                                 batchSize=40,
-                                 epochs=200)
+                                 batchSize=self.batchSize,
+                                 epochs=self.epochs)
         vnames = ['View1', 'View2', 'View3']
 
         model = DGCCA(arch, lparams, vnames)

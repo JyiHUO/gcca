@@ -164,25 +164,25 @@ if __name__ == "__main__":
     clf_list = [gcca, spare_gcca, cca, deepcca, WeightedGCCA, dgcca_]
 
     # choose which model you want to use
-    clf_ = clf_list[-1]  # gcca
+    clf_ = clf_list[-1]
 
-    # print ("################### start testing result #####################")
-    # print()
-    # t_result_gene_data(clf_)
-    # print("################### finish testing result #####################")
-    # print()
+    print ("################### start testing result #####################")
+    print()
+    t_result_gene_data(clf_)
+    print("################### finish testing result #####################")
+    print()
 
-    # print("################### start testing std #####################")
-    # print()
-    # t_std_gene_data(clf_)
-    # print("################### finish testing std #####################")
-    # print()
-    #
-    # print("################### start testing normalize or not #####################")
-    # print()
-    # t_if_normalize_or_not(clf_)
-    # print("################### finish testing normalize or not #####################")
-    # print()
+    print("################### start testing std #####################")
+    print()
+    t_std_gene_data(clf_)
+    print("################### finish testing std #####################")
+    print()
+
+    print("################### start testing normalize or not #####################")
+    print()
+    t_if_normalize_or_not(clf_)
+    print("################### finish testing normalize or not #####################")
+    print()
 
     print("################### start testing three views of language data #####################")
     print()
@@ -190,8 +190,8 @@ if __name__ == "__main__":
     print("################### finish testing three views of language data #####################")
     print()
 
-    # print("###################start testing synthetic data #####################")
-    # print()
-    # t_synthetic_data(clf_)
-    # print("###################finish testing synthetic data #####################")
-    # print()
+    print("###################start testing synthetic data #####################")
+    print()
+    t_synthetic_data(clf_)
+    print("###################finish testing synthetic data #####################")
+    print()
