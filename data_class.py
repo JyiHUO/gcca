@@ -17,94 +17,21 @@ class data_generate:
         self.train_data = None  # [(D, N), (D, N) ... ]
         self.test_data = None
 
-    def generate_boston(self, normalize=True):
-        boston = ds.load_boston()
-        X = boston.data
-        y = boston.target
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.6,random_state=10)
-
-        self.origin_train_data = [X_train, y_train.reshape((-1, 1))]
-
-        if normalize:
-            X_train, y_train = self._center_norm(X_train, y_train)
-
-        self.train_data = [X_train, y_train.reshape((-1, 1))]
-        self.test_data = [X_test, y_test.reshape((-1, 1))]
-
-    def generate_mnist(self):
-        data1 = load_data('noisymnist_view1.gz', 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view1.gz')
-        data2 = load_data('noisymnist_view2.gz', 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view2.gz')
-        x_train1 = data1[0][0]
-        y_train1 = data1[0][1]
-        x_test1 = data1[2][0]
-        y_test1 = data1[2][1]
-
-        x_train2 = data2[0][0]
-        y_train2 = data2[0][1]
-        x_test2 = data2[2][0]
-        y_test2 = data2[2][1]
-
-        self.origin_train_data = [x_train1, x_train2]
-
-
-        self.train_data = [x_train1, x_train2]
-        self.test_data = [x_test1, x_test2]
-        self.mnist_train_label = y_train1
-        self.mnist_test_label = y_test1
-
-    def generate_mnist_x_y_acc(self):
-        data1 = load_data('noisymnist_view1.gz', 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view1.gz')
-        x_train1 = data1[0][0]
-        y_train1 = data1[0][1]
-        x_test1 = data1[2][0]
-        y_test1 = data1[2][1]
-
-        # dummy target data
-        y_train = pd.get_dummies(y_train1).values
-        y_test = pd.get_dummies(y_test1).values
-
-        self.origin_train_data = [y_train1, y_test1]
-
-        self.train_data = [x_train1, y_train]
-        self.test_data = [x_test1, y_test]
-
-    def generate_mnist_half(self):
-        data1 = load_data('noisymnist_view1.gz', 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view1.gz')
-        data2 = load_data('noisymnist_view2.gz', 'https://www2.cs.uic.edu/~vnoroozi/noisy-mnist/noisymnist_view2.gz')
-
-        x_train = data1[0][0]
-        y_train = data1[0][1]
-        x_test = data1[2][0]
-        y_test = data1[2][1]
-
-        def _cut_half(X):
-            # X = X[:6000, :]
-            # X = (X - np.mean(X)) / np.std(X)
-
-            N = X.shape[0]
-            X = X.reshape((N, 28, 28))
-            left = X[:, :, :14]
-            right = X[:, :, 14:]
-            return left.reshape((N, -1)), right.reshape((N, -1))
-
-        self.train_data = _cut_half(x_train)
-        self.test_data = _cut_half(x_test)
-
-    def en_es_fr(self, row = 800, normalize = False):
-        if row == 800:
-            v1 = pd.read_csv("../gcca_data/csv_data/en800data.csv", encoding = "ISO-8859-1").values
-            v2 = pd.read_csv("../gcca_data/csv_data/es800data.csv", encoding = "ISO-8859-1").values
-        else:
-            v1 = pd.read_csv("../gcca_data/csv_data/en1000data.csv", encoding = "ISO-8859-1").values
-            v2 = pd.read_csv("../gcca_data/csv_data/fr1000data.csv", encoding = "ISO-8859-1").values
-
-        if normalize:
-            self._center_norm([v1, v2])
-        v1_train, v1_test, v2_train, v2_test = train_test_split(v1, v2, test_size = 0.8, random_state = 42)
-
-        self.train_data = [v1_train, v2_train]
-        self.test_data = [v1_test, v2_test]
+    # def en_es_fr(self, row = 800, normalize = False):
+    #     if row == 800:
+    #         v1 = pd.read_csv("../gcca_data/csv_data/en800data.csv", encoding = "ISO-8859-1").values
+    #         v2 = pd.read_csv("../gcca_data/csv_data/es800data.csv", encoding = "ISO-8859-1").values
+    #     else:
+    #         v1 = pd.read_csv("../gcca_data/csv_data/en1000data.csv", encoding = "ISO-8859-1").values
+    #         v2 = pd.read_csv("../gcca_data/csv_data/fr1000data.csv", encoding = "ISO-8859-1").values
+    #
+    #     if normalize:
+    #         self._center_norm([v1, v2])
+    #     v1_train, v1_test, v2_train, v2_test = train_test_split(v1, v2, test_size = 0.8, random_state = 42)
+    #
+    #     self.train_data = [v1_train, v2_train]
+    #     self.test_data = [v1_test, v2_test]
 
     def generate_genes_data(self,num=0, normalize=False, random_state = 42):
         Srbct = sco.loadmat("../gcca_data/genes_data/Srbct.mat")

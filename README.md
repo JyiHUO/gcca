@@ -31,24 +31,23 @@ pandas
 
 Main programe is in `all_kinds_of_test.py`. You should open this file and choose which model you want to run
 
+Choose whatever you want and have fun:
 ```python
-# preserve all model in one list
-clf_list = [gcca, spare_gcca, cca, deepcca, WeightedGCCA, dgcca_]
-
-# choose which model you want to use
-clf_ = clf_list[0]  
+Which model do you want to choose?
+0.gcca,
+1.spare_gcca,
+2.cca,
+3.deepcca,
+4.WeightedGCCA,
+5.dgcca_
+>>>0
+Which result do you want to test?
+0.test in gene data,
+1.test in gene data for std,
+2.test in gene data whether normalize or not,
+4. nothing
+>>>0
 ```
-
-And then you should choose which part you want to print, such as, the first part :
-```python
-print ("################### start testing result #####################")
-print()
-t_result_gene_data(clf_)
-print("################### finish testing result #####################")
-print()
-```
-
-And then **comment the other printing code**, because it will take you massive time to run
 
 And also, you can check the file which you like and deepen it.
 
