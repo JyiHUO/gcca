@@ -307,3 +307,33 @@ class deepcca(metric):
             return -corr
 
         return inner_cca_objective
+
+if __name__ == "__main__":
+    data = data_generate()
+    clf_ = deepcca
+
+    # gene data
+    name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
+
+    i = 0
+    data.generate_genes_data(num=i)
+
+    print()
+    print("finish reading data: ", name[i])
+    print()
+
+    # train deepcca model
+    clf = clf_(ds=data, m_rank=2, batch_size = 50, epoch_num = 10, learning_rate = 1e-3)
+    clf.solve()
+
+    # calculate all kind of metric
+    v1_test, v2_test = clf.transform(data.test_data)
+    print("total correlation in training data is: ", np.mean(clf.cal_correlation(clf.list_projection)))
+    print("total correlation in testing data is: ", np.mean(clf.cal_correlation([v1_test, v2_test])))
+    print("training data ACC is: ", clf.cal_acc(clf.list_projection))
+    print("testing data ACC is: ", clf.cal_acc([v1_test, v2_test]))
+    print("each view's spare of U is ", clf.cal_spare())
+    print("total sqare is: ", clf.cal_spare()[0])
+
+    print()
+    print()

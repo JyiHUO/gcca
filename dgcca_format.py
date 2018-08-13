@@ -55,3 +55,38 @@ class dgcca_(metric):
     def cal_G_error(self, list_view, test = True):
         K = np.ones((list_view[0].shape[0], 3), dtype=np.float32)
         return self.model.reconstructionErr(list_view, missingData=K)
+
+if __name__ == "__main__":
+    data = data_generate()
+    clf_ = dgcca_
+
+    # three views data for tfidf language data
+
+    data.generate_three_view_tfidf_dataset()
+
+    clf = clf_(ds=data, m_rank=20, batchSize=40, epochs = 200)
+    clf.solve()
+
+    # calculate all kind of metric
+    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+    print("each view's spare of U is ", clf.cal_spare())
+    print("total sqare is: ", np.mean(clf.cal_spare()))
+
+    print()
+    print()
+
+    # for synthetic data
+    data.generate_synthetic_dataset()
+
+    clf = clf_(ds=data, m_rank=2, batchSize=40, epochs = 200)
+    clf.solve()
+
+    # calculate all kind of metric
+    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+    print("each view's spare of U is ", clf.cal_spare())
+    print("total sqare is: ", np.mean(clf.cal_spare()))
+
+    print()
+    print()

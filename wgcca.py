@@ -24,7 +24,7 @@ class WeightedGCCA(metric):
         self.F = [d.shape[1] for d in ds.train_data]  # Number of features per view
         self.k = m_rank  # Dimensionality of embedding we want to learn
         eps = [1.e-8 for i in range(self.V)]
-        viewWts = None
+        viewWts = [np.random.rand() for i in range(3)]
 
         # some common setting
         self.list_view = ds.train_data
@@ -246,3 +246,38 @@ class WeightedGCCA(metric):
         self.learn(self.list_view)
         self.list_U = self.U
         self.list_projection = self.transform(self.list_view)
+
+if __name__ == "__main__":
+    data = data_generate()
+    clf_ = WeightedGCCA
+
+    # three views data for tfidf language data
+
+    data.generate_three_view_tfidf_dataset()
+
+    clf = clf_(ds=data, m_rank=20)
+    clf.solve()
+
+    # calculate all kind of metric
+    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+    print("each view's spare of U is ", clf.cal_spare())
+    print("total sqare is: ", np.mean(clf.cal_spare()))
+
+    print()
+    print()
+
+    # for synthetic data
+    data.generate_synthetic_dataset()
+
+    clf = clf_(ds=data, m_rank=2)
+    clf.solve()
+
+    # calculate all kind of metric
+    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+    print("each view's spare of U is ", clf.cal_spare())
+    print("total sqare is: ", np.mean(clf.cal_spare()))
+
+    print()
+    print()

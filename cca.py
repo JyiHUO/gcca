@@ -36,26 +36,31 @@ class cca(metric):
         return X_c, Y_c
 
 if __name__ == "__main__":
-    # generate boston data
-    dg = data_generate()
-    # dg.generate_boston()
-    # dg.generate_mnist(normalize=False)
-    # dg.generate_mnist_half()
-    # dg.en_es_fr(800)
-    dg.generate_genes_data(num=0)
-    # dg.generate_twitter_dataset()
+    data = data_generate()
+    clf_ = cca
+
+    # gene data
+    name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
+
+    i = 0
+    data.generate_genes_data(num=i)
 
     print()
-    print("finish reading data")
+    print("finish reading data: ", name[i])
     print()
 
-    cca = cca(ds=dg, m_rank=50)
-    # gcca.solve_u()
-    cca.solve()
-    # print(gcca.cal_correlation())
-    # print(gcca.cal_acc(gcca.list_projection))
-    # print(gcca.cal_acc(gcca.transform(dg.test_data[0].T, dg.test_data[1].T)))
-    print(cca.cal_spare())
-    print(np.mean(cca.cal_spare()))
-    print("训练集：", dg.train_data[0].shape)
-    print("测试集：", dg.test_data[1].shape)
+    # train gcca model
+    clf = clf_(ds=data, m_rank=2)
+    clf.solve()
+
+    # calculate all kind of metric
+    v1_test, v2_test = clf.transform(data.test_data)
+    print("total correlation in training data is: ", np.mean(clf.cal_correlation(clf.list_projection)))
+    print("total correlation in testing data is: ", np.mean(clf.cal_correlation([v1_test, v2_test])))
+    print("training data ACC is: ", clf.cal_acc(clf.list_projection))
+    print("testing data ACC is: ", clf.cal_acc([v1_test, v2_test]))
+    print("each view's spare of U is ", clf.cal_spare())
+    print("total sqare is: ", clf.cal_spare()[0])
+
+    print()
+    print()
