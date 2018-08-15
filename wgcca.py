@@ -248,8 +248,8 @@ class WeightedGCCA(metric):
         self.list_projection = self.transform(self.list_view)
 
 if __name__ == "__main__":
-#    data = data_generate()
-#    clf_ = WeightedGCCA
+    data = data_generate()
+    clf_ = WeightedGCCA
 #
 #    # three views data for tfidf language data
 #
@@ -270,7 +270,7 @@ if __name__ == "__main__":
     # for synthetic data
     data.generate_synthetic_dataset()
 
-    clf = clf_(ds=data, m_rank=2)
+    clf = clf_(ds=data, m_rank=1)
     clf.solve()
 
     # calculate all kind of metric
@@ -281,3 +281,4 @@ if __name__ == "__main__":
 
     print()
     print()
+    clf.save_U("wgcca_synthetic")

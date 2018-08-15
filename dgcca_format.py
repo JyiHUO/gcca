@@ -22,7 +22,7 @@ class dgcca_(metric):
         self.epochs = epochs
 
     def solve(self):
-        viewMlpStruct = [[v.shape[1], 10, 10, 10, self.m_rank] for v in self.list_view]  # Each view has single-hidden-layer MLP with slightly wider hidden layers
+        viewMlpStruct = [[v.shape[1], 10, 10, 10, v.shape[1]] for v in self.list_view]  # Each view has single-hidden-layer MLP with slightly wider hidden layers
 
         # Actual data used in paper plot...
 
@@ -49,7 +49,7 @@ class dgcca_(metric):
 
         # self.train_G = model.apply(self.list_view, isTrain=True)
         self.model = model
-        self.list_U = []
+        self.list_U = self.model.getU()
 
 
     def cal_G_error(self, list_view, test = True):
@@ -60,27 +60,29 @@ if __name__ == "__main__":
     data = data_generate()
     clf_ = dgcca_
 
-    # three views data for tfidf language data
-
-    data.generate_three_view_tfidf_dataset()
-
-    clf = clf_(ds=data, m_rank=20, batchSize=40, epochs = 200)
-    clf.solve()
-
-    # calculate all kind of metric
-    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
-    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
-    print("each view's spare of U is ", clf.cal_spare())
-    #print("total sqare is: ", np.mean(clf.cal_spare()))
-
-    print()
-    print()
+    # # three views data for tfidf language data
+    #
+    # data.generate_three_view_tfidf_dataset()
+    #
+    # clf = clf_(ds=data, m_rank=20, batchSize=40, epochs = 200)
+    # clf.solve()
+    #
+    # # calculate all kind of metric
+    # print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+    # print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+    # print("each view's spare of U is ", clf.cal_spare())
+    # #print("total sqare is: ", np.mean(clf.cal_spare()))
+    #
+    # print()
+    # print()
 
     # for synthetic data
     data.generate_synthetic_dataset()
 
-    clf = clf_(ds=data, m_rank=2, batchSize=40, epochs = 200)
+    clf = clf_(ds=data, m_rank=1, batchSize=40, epochs = 10)
     clf.solve()
+
+    # print(clf.list_U)
 
     # calculate all kind of metric
     print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
@@ -90,3 +92,5 @@ if __name__ == "__main__":
 
     print()
     print()
+
+    clf.save_U("deepgcca_synthetic")

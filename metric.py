@@ -146,3 +146,7 @@ class metric:
         X_proj = X.dot(self.list_U[0])
         y_pred = X_proj.dot(np.linalg.pinv(self.list_U[1])) * self.ds.y_std + self.ds.y_mean
         return y_pred
+
+    def save_U(self, name):
+        with open("../gcca_data/weight/" + name + ".pickle", "wb") as f:
+            pickle.dump(self.list_U, f)

@@ -13,13 +13,15 @@ The structure of this project should be contruct like this:
 		- csv_data/
 		- genes_data/
 		- twitter_data/
+		- three_view_data/
+		- weight/synthetic_data_model_list_U.pickle
+		- image/plot_for_spare
 
 ## Package
 
 You should install some necessary package within python3
 
 ```python
-
 keras
 theano
 numpy

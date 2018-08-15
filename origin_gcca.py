@@ -134,6 +134,7 @@ if __name__ == "__main__":
 #
 #    print()
 #    print()
+#    clf.save_U("gcca_gene")
 
     # three views data for tfidf language data
 
@@ -150,6 +151,8 @@ if __name__ == "__main__":
 #
 #    print()
 #    print()
+#    clf.save_U("gcca_language")
+
 #
 #    # for synthetic data
     data.generate_synthetic_dataset()
@@ -165,3 +168,4 @@ if __name__ == "__main__":
 
     print()
     print()
+    clf.save_U("gcca_synthetic")

@@ -465,6 +465,9 @@ class DGCCA:
     if initWeights is not None:
       print('Initializing weights!')
       self._model.setWeights(initWeights)
+
+  def getU(self):
+    return self._model.gccaModule.U
   
   def save(self, fpath):
     '''

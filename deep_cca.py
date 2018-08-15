@@ -156,6 +156,7 @@ class deepcca(metric):
             for v in range(2):
                 new_data[v] -= m[v].reshape([1, -1]).repeat(data_num, axis=0)  # center data before prediction
                 new_data[v] = np.dot(new_data[v], w[v])  # do some prediction
+            self.list_U = w
 
         return new_data
 
@@ -337,3 +338,5 @@ if __name__ == "__main__":
 
     print()
     print()
+
+    clf.save_U("deepcca_gene_"+name[i])
