@@ -323,17 +323,17 @@ if __name__ == "__main__":
     print()
 
     # train deepcca model
-    clf = clf_(ds=data, m_rank=2, batch_size = 50, epoch_num = 10, learning_rate = 1e-3)
+    clf = clf_(ds=data, m_rank=3, batch_size = 50, epoch_num = 10, learning_rate = 1e-3)
     clf.solve()
 
     # calculate all kind of metric
     v1_test, v2_test = clf.transform(data.test_data)
-    print("total correlation in training data is: ", np.mean(clf.cal_correlation(clf.list_projection)))
-    print("total correlation in testing data is: ", np.mean(clf.cal_correlation([v1_test, v2_test])))
+    print("total correlation in training data is: ", np.sum(clf.cal_correlation(clf.list_projection)))
+    print("total correlation in testing data is: ", np.sum(clf.cal_correlation([v1_test, v2_test])))
     print("training data ACC is: ", clf.cal_acc(clf.list_projection))
     print("testing data ACC is: ", clf.cal_acc([v1_test, v2_test]))
     print("each view's spare of U is ", clf.cal_spare())
-    print("total sqare is: ", clf.cal_spare()[0])
+    #print("total sqare is: ", clf.cal_spare()[0])
 
     print()
     print()

@@ -12,7 +12,7 @@ from metric import *
 
 class spare_gcca(metric):
 
-    def __init__(self, ds, m_rank=0):
+    def __init__(self, ds, m_rank=0, mu_x = None):
         '''
         Constructor for GeneralizedCCA.
 
@@ -28,6 +28,10 @@ class spare_gcca(metric):
         self.G = None  # subspace
         self.list_U = []  # save U for each view [(D, r), (D, r) ... ]
         self.list_projection = []  # save project data through U for each view [(N, r), (N, r) ... ]
+        if mu_x == None:
+            self.mu_x = [10 for i in range(len(self.list_view))]
+        else:
+            self.mu_x =  mu_x # [10 for i in range(len(self.list_view))]
 
 
     def solve_g(self):
@@ -122,7 +126,7 @@ class spare_gcca(metric):
 
 
         for i in range(len(B)):
-            U = self.linearized_bregman(A[i], B[i], verbose=verbose)
+            U = self.linearized_bregman(A[i], B[i],self.mu_x[i], verbose=verbose)
 
             projected_data = self.list_view[i].transpose().dot(U)
 
@@ -135,7 +139,7 @@ class spare_gcca(metric):
                 print()
 
 
-    def linearized_bregman(self, A, B, verbose=True):
+    def linearized_bregman(self, A, B, mu_x, verbose=True):
         '''
         Solve equation which is Ax = B
         :param A: matrix
@@ -149,7 +153,7 @@ class spare_gcca(metric):
         epsilon = 1e-5
         delta = 0.5
         tau = 1
-        mu_x = 5
+        # mu_x = 10
         Numit_x = 0
         Vx_tilde = A.T.dot(B)
         Vx_old = Vx_tilde
@@ -184,11 +188,12 @@ class spare_gcca(metric):
 if __name__ == "__main__":
     data = data_generate()
     clf_ = spare_gcca
-
-    # gene data
+#
+#    # gene data
+    mu_x = (20, 20)
     name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
 
-    i = 0
+    i = 3
     data.generate_genes_data(num=i)
 
     print()
@@ -196,17 +201,17 @@ if __name__ == "__main__":
     print()
 
     # train spare gcca model
-    clf = clf_(ds=data, m_rank=2)
+    clf = clf_(ds=data, m_rank=1, mu_x = mu_x)
     clf.solve()
 
     # calculate all kind of metric
     v1_test, v2_test = clf.transform(data.test_data)
-    print("total correlation in training data is: ", np.mean(clf.cal_correlation(clf.list_projection)))
-    print("total correlation in testing data is: ", np.mean(clf.cal_correlation([v1_test, v2_test])))
+    print("total correlation in training data is: ", np.sum(clf.cal_correlation(clf.list_projection)))
+    print("total correlation in testing data is: ", np.sum(clf.cal_correlation([v1_test, v2_test])))
     print("training data ACC is: ", clf.cal_acc(clf.list_projection))
     print("testing data ACC is: ", clf.cal_acc([v1_test, v2_test]))
     print("each view's spare of U is ", clf.cal_spare())
-    print("total sqare is: ", clf.cal_spare()[0])
+    #print("total sqare is: ", clf.cal_spare()[0])
 
     print()
     print()
@@ -214,35 +219,38 @@ if __name__ == "__main__":
 
     # three views data for tfidf language data
 
-    data.generate_three_view_tfidf_dataset()
-
-
-    clf = clf_(ds=data, m_rank=20)
-    clf.solve()
-
-    # calculate all kind of metric
-    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
-    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
-    print("each view's spare of U is ", clf.cal_spare())
-    print("total sqare is: ", np.mean(clf.cal_spare()))
-
-    print()
-    print()
-
-
-    # for synthetic data
-    data.generate_synthetic_dataset()
-
-    clf = clf_(ds=data, m_rank=2)
-    clf.solve()
-
-    # calculate all kind of metric
-    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
-    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
-    print("each view's spare of U is ", clf.cal_spare())
-    print("total sqare is: ", np.mean(clf.cal_spare()))
-
-    print()
-    print()
-
-
+#    data.generate_three_view_tfidf_dataset()
+#
+#
+#    mu_x = (10, 10, 10)
+#    clf = clf_(ds=data, m_rank=20, mu_x = mu_x)
+#    clf.solve()
+#
+#    # calculate all kind of metric
+#    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+#    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+#    print("each view's spare of U is ", clf.cal_spare())
+#    print("total sqare is: ", np.mean(clf.cal_spare()))
+#
+#    print()
+#    print()
+#
+#
+#    # for synthetic data
+#    mu_x = (10,10,10)
+#    
+#    data.generate_synthetic_dataset()
+#
+#    clf = clf_(ds=data, m_rank=1, mu_x = mu_x)
+#    clf.solve()
+#
+#    # calculate all kind of metric
+#    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+#    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+#    print("each view's spare of U is ", clf.cal_spare())
+#    print("total sqare is: ", np.mean(clf.cal_spare()))
+#
+#    print()
+#    print()
+##
+#

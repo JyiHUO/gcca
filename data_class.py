@@ -57,7 +57,7 @@ class data_generate:
             v1, v2 = self._center_norm([v1, v2])
             v2 = pd.get_dummies(v2.reshape((-1))).values
 
-        v1_train, v1_test, v2_train, v2_test = train_test_split(v1, v2, test_size=0.6, random_state=random_state)
+        v1_train, v1_test, v2_train, v2_test = train_test_split(v1, v2, test_size=0.5, random_state=random_state)
 
         # print ("- the shape of training data in view one is: ", v1_train.shape)
         # print ("- the shape of training data in view two is: ", v2_train.shape)

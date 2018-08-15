@@ -25,7 +25,7 @@ class metric:
             res = []
             for i in range(D):
                 if not np.isnan(corr_array[i][i + D]) :
-                    res.append(corr_array[i][i + D])
+                    res.append(abs(corr_array[i][i + D]))
             return res
 
         corr_array = np.corrcoef(np.concatenate(list_projection, axis=1), rowvar=False)
@@ -37,7 +37,7 @@ class metric:
     def cal_spare(self):
         res = []
         for u in self.list_U:
-            res.append(np.sum(np.abs(u) < 1e-5) / (u.shape[0] * u.shape[1]))
+            res.append(np.sum(np.abs(u)<=1e-5) / (u.shape[0] * u.shape[1]))
         return res
 
     def cal_average_precision(self, list_projection):

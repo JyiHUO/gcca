@@ -71,7 +71,7 @@ if __name__ == "__main__":
     print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
     print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
     print("each view's spare of U is ", clf.cal_spare())
-    print("total sqare is: ", np.mean(clf.cal_spare()))
+    #print("total sqare is: ", np.mean(clf.cal_spare()))
 
     print()
     print()
