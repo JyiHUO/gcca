@@ -7,6 +7,8 @@ def txt_to_array(path):
 
     big_dict = {}
     for dir_name in dir_f:
+        if "." in dir_name:
+            continue
         f_path = path + dir_name
         file = sorted(os.listdir(f_path))
         arr = []
@@ -25,12 +27,12 @@ if __name__ == "__main__":
     path = "../gcca_data/three_view_data/"
     big_dict_str = txt_to_array(path)
 
-    vec = TfidfVectorizer(min_df=1)
+    vec = TfidfVectorizer(min_df=2)
     big_dict = {}
     for k in big_dict_str.keys():
         arr = vec.fit_transform(big_dict_str[k])
         big_dict[k] = arr.toarray()
-        # print(arr.shape)
+        print(arr.shape)
         # print(arr.toarray()[0])
 
     with open(path + "big_dict.pickle", 'wb') as f:

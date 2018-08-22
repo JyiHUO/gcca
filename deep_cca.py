@@ -339,4 +339,3 @@ if __name__ == "__main__":
     print()
     print()
 
-    clf.save_U("deepcca_gene_"+name[i])

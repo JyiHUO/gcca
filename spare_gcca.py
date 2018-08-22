@@ -239,7 +239,7 @@ if __name__ == "__main__":
 #    print()
 #    print()
 
-#    clf.save_U("sgcca_language")
+
 #
    # for synthetic data
     mu_x = (10,10,10)

@@ -7,6 +7,7 @@ from utils import *
 import pandas as pd
 import scipy.io as sco
 import pickle
+from sklearn.decomposition import TruncatedSVD as PCA
 
 class data_generate:
     def __init__(self):
@@ -93,6 +94,8 @@ class data_generate:
             data_dict = pickle.load(f)
 
         val = list(data_dict.values())
+
+
         index = np.arange(val[0].shape[0])
         index_train, index_test = train_test_split(index, test_size=0.5, random_state=42)
 
