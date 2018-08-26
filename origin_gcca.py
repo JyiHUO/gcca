@@ -138,9 +138,26 @@ if __name__ == "__main__":
 
     # three views data for tfidf language data
 
-    data.generate_three_view_tfidf_dataset()
+    # data.generate_three_view_tfidf_dataset()
+    #
+    # clf = clf_(ds=data, m_rank=20)
+    # clf.solve()
+    #
+    # # calculate all kind of metric
+    # print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+    # print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+    # print("each view's spare of U is ", clf.cal_spare())
+    # print("total sqare is: ", np.mean(clf.cal_spare()))
+    #
+    # print()
+    # print()
 
-    clf = clf_(ds=data, m_rank=20)
+
+#
+#    # for synthetic data
+    data.generate_synthetic_dataset()
+
+    clf = clf_(ds=data, m_rank=1)
     clf.solve()
 
     # calculate all kind of metric
@@ -151,21 +168,4 @@ if __name__ == "__main__":
 
     print()
     print()
-
-
-#
-#    # for synthetic data
-#     data.generate_synthetic_dataset()
-#
-#     clf = clf_(ds=data, m_rank=1)
-#     clf.solve()
-#
-#     # calculate all kind of metric
-#     print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
-#     print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
-#     print("each view's spare of U is ", clf.cal_spare())
-#     print("total sqare is: ", np.mean(clf.cal_spare()))
-#
-#     print()
-#     print()
-#     clf.save_U("gcca_synthetic")
+    clf.save_U("gcca_synthetic")
