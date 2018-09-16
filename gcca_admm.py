@@ -10,7 +10,7 @@ import pickle
 from data_class import *
 from metric import *
 
-class gcca(metric):
+class gcca_admm(metric):
 
     def __init__(self, ds, m_rank=0):
         '''
@@ -84,9 +84,34 @@ class gcca(metric):
 
         # return G  # (N, D_all or r)
 
+    def cal_A_B(self):
+        '''
+        Calculate common space of G and some necessary variable
+        :param list_view: [view1, view2 ...] view shape:(D, N)
+        :return: matrix G, list A , list B
+        '''
 
+        A = []
+        B = []
+        S = []
 
-    def solve(self):
+        for i, view in enumerate(self.list_view):
+            p, s, q = np.linalg.svd(view, full_matrices=False)
+
+            A.append(p)
+            B.append(q)
+            S.append(s)
+
+            # cal A and B
+            n = S[i].shape[0]
+            sigama = np.zeros((n, n))
+            sigama[np.arange(n), np.arange(n)] = S[i]
+            A[i] = A[i].T
+            B[i] = np.linalg.pinv(sigama).dot(B[i])
+
+        return A, B
+
+    def solve_u(self):
         number_of_views = len(self.list_view)
 
         # cal G
@@ -96,20 +121,100 @@ class gcca(metric):
         for i in range(number_of_views):
             U = np.linalg.pinv(self.list_view[i].transpose()) * np.mat(self.G)
 
-            projected_data = np.mat(self.list_view[i].transpose()) * np.mat(U)
-
             self.list_U.append(np.array(U))
+
+    def solve(self):
+        self.solve_u()
+        self.admm(100)
+
+        number_of_views = len(self.list_view)
+        for i in range(number_of_views):
+            projected_data = self.list_view[i].transpose().dot(self.list_U[i])
+
             self.list_projection.append(np.array(projected_data))
 
+    def admm(self, epoch):
+
+        # initialize
+        muta = 1
+        beta = 1
+        Z_new = None
+        tor = 0.001
+
+        A, B = self.cal_A_B()
+
+        for i in range(len(B)):
+            tri = 0
+            while True:
+
+                # update Z
+                temp = B[i].T.dot(tri / beta - A[i].dot(self.list_U[i]) )
+
+                U, S, V = np.linalg.svd(temp, full_matrices=False)
+                Z_new = U.dot(V)
+
+                # update G
+                x = self.list_U[i] - muta*A[i].T.dot(
+                    A[i].dot(self.list_U[i]) + B[i].dot(Z_new) - tri/beta
+                )
+                mu = muta/beta
+                G_new = np.sign(x) * np.maximum(np.abs(x) - mu, 0)
+
+                # update tri
+                tri_new = tri - beta*( A[i].dot(G_new) + B[i].dot(Z_new) )
+
+                # judgement
+                left = beta*np.sum(np.abs(G_new - self.list_U[i])) / max(1, np.sum(np.abs(self.list_U[i])))
+                right = np.sum(np.abs(tri_new - tri)) / beta
+                if left < tor and right < tor:
+                    self.list_U[i] = G_new
+                    tri = tri_new
+                    break
+
+                self.list_U[i] = G_new
+                tri = tri_new
+
+        self.G = Z_new
 
 
 
 
 if __name__ == "__main__":
     data = data_generate()
-    clf_ = gcca
-#
-#    # gene data
+    clf_ = gcca_admm
+
+    # data.generate_synthetic_dataset()
+    #
+    # clf = clf_(ds=data, m_rank=1)
+    # clf.solve()
+    #
+    # # calculate all kind of metric
+    # print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+    # print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+    # print("each view's spare of U is ", clf.cal_spare())
+    # print("total sqare is: ", np.mean(clf.cal_spare()))
+    #
+    # print()
+    # print()
+    # clf.save_U("gcca_synthetic")
+
+    # three views data for tfidf language data
+
+    # data.generate_three_view_tfidf_dataset()
+    #
+    # clf = clf_(ds=data, m_rank=20)
+    # clf.solve()
+    #
+    # # calculate all kind of metric
+    # print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+    # print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+    # print("each view's spare of U is ", clf.cal_spare())
+    # print("total sqare is: ", np.mean(clf.cal_spare()))
+    #
+    # print()
+    # print()
+
+    # gene data
     name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
 
     i = 3
@@ -130,42 +235,4 @@ if __name__ == "__main__":
     print("training data ACC is: ", clf.cal_acc(clf.list_projection))
     print("testing data ACC is: ", clf.cal_acc([v1_test, v2_test]))
     print("each view's spare of U is ", clf.cal_spare())
-    #print("total sqare is: ", clf.cal_spare()[0])
-#
-#    print()
-#    print()
-#    clf.save_U("gcca_gene")
-
-    # three views data for tfidf language data
-
-    # data.generate_three_view_tfidf_dataset()
-    #
-    # clf = clf_(ds=data, m_rank=20)
-    # clf.solve()
-    #
-    # # calculate all kind of metric
-    # print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
-    # print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
-    # print("each view's spare of U is ", clf.cal_spare())
-    # print("total sqare is: ", np.mean(clf.cal_spare()))
-    #
-    # print()
-    # print()
-
-
-#
-#    # for synthetic data
-#     data.generate_synthetic_dataset()
-#
-#     clf = clf_(ds=data, m_rank=1)
-#     clf.solve()
-#
-#     # calculate all kind of metric
-#     print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
-#     print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
-#     print("each view's spare of U is ", clf.cal_spare())
-#     print("total sqare is: ", np.mean(clf.cal_spare()))
-#
-#     print()
-#     print()
-#     clf.save_U("gcca_synthetic")
+    # print("total sqare is: ", clf.cal_spare()[0])
