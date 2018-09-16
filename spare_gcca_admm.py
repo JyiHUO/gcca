@@ -10,11 +10,10 @@ import pickle
 from data_class import *
 from metric import *
 from numpy import linalg as LA
-import time
 
-class gcca_admm(metric):
+class spare_gcca_admm(metric):
 
-    def __init__(self, ds, m_rank=0):
+    def __init__(self, ds, m_rank=0, mu_x = None):
         '''
         Constructor for GeneralizedCCA.
 
@@ -23,7 +22,6 @@ class gcca_admm(metric):
             m_rank (int): How many principal components to keep. A value of 0
                 indicates that it should be full-rank. (Default 0)
         '''
-
         super().__init__()
         self.list_view = [dd.T for dd in ds.train_data]  # [(D, N), (D, N) ... ]
         self.ds = ds
@@ -31,6 +29,10 @@ class gcca_admm(metric):
         self.G = None  # subspace
         self.list_U = []  # save U for each view [(D, r), (D, r) ... ]
         self.list_projection = []  # save project data through U for each view [(N, r), (N, r) ... ]
+        if mu_x == None:
+            self.mu_x = [10 for i in range(len(self.list_view))]
+        else:
+            self.mu_x =  mu_x # [10 for i in range(len(self.list_view))]
 
 
     def solve_g(self):
@@ -109,21 +111,28 @@ class gcca_admm(metric):
             sigama = np.zeros((n, n))
             sigama[np.arange(n), np.arange(n)] = S[i]
             A[i] = A[i].T
-            B[i] = np.linalg.pinv(sigama).dot(B[i])
+            B[i] = np.linalg.pinv(sigama).dot(B[i].dot(self.G))
 
         return A, B
 
-    def solve_u(self):
-        number_of_views = len(self.list_view)
 
+    def solve_u(self, verbose = False):
         # cal G
         self.solve_g()
-        # print (self.G.shape)
+        # self.G = self.G.T
 
-        for i in range(number_of_views):
-            U = np.linalg.pinv(self.list_view[i].transpose()) * np.mat(self.G)
+        A, B = self.cal_A_B()
 
-            self.list_U.append(np.array(U))
+
+        for i in range(len(B)):
+            U = self.linearized_bregman(A[i], B[i],self.mu_x[i], verbose=verbose)
+
+            self.list_U.append(U)
+
+            if verbose:
+                print()
+                print("next view: ")
+                print()
 
     def solve(self):
         self.solve_u()
@@ -135,16 +144,43 @@ class gcca_admm(metric):
 
             self.list_projection.append(np.array(projected_data))
 
+    def cal_A_B_admm(self):
+        '''
+        Calculate common space of G and some necessary variable
+        :param list_view: [view1, view2 ...] view shape:(D, N)
+        :return: matrix G, list A , list B
+        '''
+
+        A = []
+        B = []
+        S = []
+
+        for i, view in enumerate(self.list_view):
+            p, s, q = np.linalg.svd(view, full_matrices=False)
+
+            A.append(p)
+            B.append(q)
+            S.append(s)
+
+            # cal A and B
+            n = S[i].shape[0]
+            sigama = np.zeros((n, n))
+            sigama[np.arange(n), np.arange(n)] = S[i]
+            A[i] = A[i].T
+            B[i] = np.linalg.pinv(sigama).dot(B[i])
+
+        return A, B
+
     def admm(self):
 
         # initialize
-        muta = 0.0001
+        muta = 0.01
         beta_max = 10
         Z_new = None
         tor = 0.1
         p = 1.1
 
-        A, B = self.cal_A_B()
+        A, B = self.cal_A_B_admm()
 
 
         for i in range(len(B)):
@@ -185,49 +221,55 @@ class gcca_admm(metric):
         self.G = Z_new
 
 
+    def linearized_bregman(self, A, B, mu_x, verbose=True):
+        '''
+        Solve equation which is Ax = B
+        :param A: matrix
+        :param B: matrix
+        :return: matrix X
+        '''
 
+        B = np.array(B)
+        # initialize parameter
+        error_x = 1
+        epsilon = 1e-5
+        delta = 0.5
+        tau = 1
+        # mu_x = 10
+        Numit_x = 0
+        Vx_tilde = A.T.dot(B)
+        Vx_old = Vx_tilde
+
+        # solve X
+        X = None
+        while error_x > epsilon:
+            # print (Vx_tilde)
+            t = delta * np.sign(Vx_tilde)
+            b = np.maximum(tau * np.abs(Vx_tilde) - mu_x, 0)
+            X = t * b
+            # X = delta * np.sign(Vx_tilde) * np.maximum(tau * np.abs(Vx_tilde) - mu_x, 0)
+            # print(Swx.shape)
+            Vx_new = Vx_tilde - A.T.dot(A.dot(X) - B)
+            alpha = (2 * Numit_x + 3) / (Numit_x + 3)
+            Vx_tilde = alpha * Vx_new + (1 - alpha) * Vx_old
+
+            Vx_old = Vx_new
+
+            error_x = np.linalg.norm(A.dot(X) - B, "fro") / np.linalg.norm(B, "fro")
+            Numit_x = Numit_x + 1
+
+            if verbose:
+                if Numit_x % 200 == 0:
+                    print(error_x)
+
+        return X
 
 if __name__ == "__main__":
     data = data_generate()
-    clf_ = gcca_admm
-
-
-    # data.generate_synthetic_dataset()
-    #
-    # clf = clf_(ds=data, m_rank=1)
-    # clf.solve()
-    #
-    # # calculate all kind of metric
-    # print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
-    # print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
-    # print("each view's spare of U is ", clf.cal_spare())
-    # print("total sqare is: ", np.mean(clf.cal_spare()))
-    #
-    # print()
-    # print()
-
-    # clf.save_U("gcca_synthetic")
-
-    # three views data for tfidf language data
-
-    # data.generate_three_view_tfidf_dataset()
-    #
-    # clf = clf_(ds=data, m_rank=20)
-    # clf.solve()
-    #
-    # # calculate all kind of metric
-    # print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
-    # print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
-    # print("each view's spare of U is ", clf.cal_spare())
-    # print("total sqare is: ", np.mean(clf.cal_spare()))
-    #
-    # print()
-    # print()
-
-    # gene data
-
-    s = time.time()
-
+    clf_ = spare_gcca_admm
+#
+#    # gene data
+    mu_x = (20, 20)
     name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
 
     i = 3
@@ -237,8 +279,8 @@ if __name__ == "__main__":
     print("finish reading data: ", name[i])
     print()
 
-    # train gcca model
-    clf = clf_(ds=data, m_rank=1)
+    # train spare gcca model
+    clf = clf_(ds=data, m_rank=1, mu_x = mu_x)
     clf.solve()
 
     # calculate all kind of metric
@@ -248,8 +290,7 @@ if __name__ == "__main__":
     print("training data ACC is: ", clf.cal_acc(clf.list_projection))
     print("testing data ACC is: ", clf.cal_acc([v1_test, v2_test]))
     print("each view's spare of U is ", clf.cal_spare())
-    # print("total sqare is: ", clf.cal_spare()[0])
+    #print("total sqare is: ", clf.cal_spare()[0])
 
-    e = time.time()
-
-    print ("total time is ", e - s)
+    print()
+    print()

@@ -123,17 +123,16 @@ if __name__ == "__main__":
     clf = clf_(ds=data, m_rank=1)
     clf.solve()
 
-    # calculate all kind of metric
     v1_test, v2_test = clf.transform(data.test_data)
     print("total correlation in training data is: ", np.sum(clf.cal_correlation(clf.list_projection)))
     print("total correlation in testing data is: ", np.sum(clf.cal_correlation([v1_test, v2_test])))
     print("training data ACC is: ", clf.cal_acc(clf.list_projection))
     print("testing data ACC is: ", clf.cal_acc([v1_test, v2_test]))
     print("each view's spare of U is ", clf.cal_spare())
-    #print("total sqare is: ", clf.cal_spare()[0])
-#
-#    print()
-#    print()
+    print("total sqare is: ", clf.cal_spare()[0])
+
+    print()
+    print()
 #    clf.save_U("gcca_gene")
 
     # three views data for tfidf language data
