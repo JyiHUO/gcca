@@ -118,7 +118,7 @@ class gcca_admm(metric):
 
         # cal G
         self.solve_g()
-        # print (self.G.shape)
+        print (self.G.shape)
 
         for i in range(number_of_views):
             U = np.linalg.pinv(self.list_view[i].transpose()) * np.mat(self.G)
@@ -138,51 +138,70 @@ class gcca_admm(metric):
     def admm(self):
 
         # initialize
-        muta = 0.0001
-        beta_max = 10
-        Z_new = None
-        tor = 0.1
-        p = 1.1
+        muta = 1  # 对应论文代码的delta
+        beta_max = 1e4  # 最大beta值
+        Z_new = None  # 用来存放更新后的Z
+        tor1 = 1e-2
+        tor2 = 1e-7
+        p = 2  # 对应论文代码的rho
+        iter = 1e3  # 迭代次数
 
-        A, B = self.cal_A_B()
+        A, B = self.cal_A_B()  # 对应论文的A和B
 
 
-        for i in range(len(B)):
-            tri = 0
-            beta = 1 / LA.norm(A[i].T.dot(B[i]), ord=np.inf)
+        for i in range(len(B)):  # 迭代每一个view
+            N, M = self.list_U[i].shape
+            iter_k = 0  # 迭代步数初始化为0
+            tri = 0  # 论文倒三角符号的初始化
+            G = np.random.random(size=self.list_U[i].shape)  # np.zeros_like(self.list_U[i])  # 新加坡论文G初始化为0（也就是我们的W）
+            beta = 1 / np.max(np.max(np.abs(A[i].T.dot(B[i]))))  # 1 / LA.norm(A[i].T.dot(B[i]), ord=np.inf)  # beta初始化，无穷范数
             while True:
+                iter_k +=1  # 迭代次数加一
 
                 # update Z
-                temp = B[i].T.dot(tri / beta - A[i].dot(self.list_U[i]) )
+                temp = B[i].T.dot(tri / beta - A[i].dot(G) )
 
                 U, S, V = np.linalg.svd(temp, full_matrices=False)
-                Z_new = U.dot(V)
+                Z_new = U.dot(V.T)  # 原来是V不是V.T
+
+                temp_Z_new = Z_new.dot(Z_new.T)  # 连这里的条件都不满足G*G.T = I, 我们的G并不一定是方阵啊，这是一个很关键的地方
 
                 # update G
-                x = self.list_U[i] - muta*A[i].T.dot(
-                    A[i].dot(self.list_U[i]) + B[i].dot(Z_new) - tri/beta
-                )
+                # seperate x into piece
+                # x = G - muta*A[i].T.dot(
+                #     A[i].dot(G) + B[i].dot(Z_new) - tri/beta
+                # )
+                temp_x1 = A[i].dot(G) + B[i].dot(Z_new)
+                temp_x2 = tri/beta
+                temp_x3 = muta*A[i].T.dot(temp_x1 - temp_x2)
+                x = G - temp_x3
+
                 mu = muta/beta
-                G_new = np.sign(x) * np.maximum(np.abs(x) - mu, 0)
+                # seperate G_new into piece
+                # G_new = np.sign(x) * np.maximum(np.abs(x) - mu, 0)
+                temp_G_new1 = np.sign(x)
+                temp_G_new2 = np.abs(x) - mu
+                G_new = temp_G_new1 * np.maximum(temp_G_new2, 0)
 
                 # update tri
                 tri_new = tri - beta*( A[i].dot(G_new) + B[i].dot(Z_new) )
 
-                # update beta
-                beta = min(beta_max, p*beta)
-
                 # judgement
-                left = beta * LA.norm(G_new - self.list_U[i], ord="fro") / max(1, LA.norm(self.list_U[i], ord="fro") )
+                left = beta * LA.norm(G_new - G, ord="fro") / max(1, LA.norm(G, ord="fro") )
                 right = LA.norm(tri_new - tri, ord="fro") / beta
-                if left < tor and right < tor:
-                    self.list_U[i] = G_new
+                if (left < tor1 and right < tor2) or iter_k == iter:  # 判断如果都小于容忍值或达到迭代次数
+                    self.list_U[i] = G_new  # 把最终结果存起来
                     tri = tri_new
                     break
 
-                self.list_U[i] = G_new
+                # update beta
+                beta = min(beta_max, p * beta)
+
+                # 更新 k + 1的值，在这里有一点要注意，Z_{k+1}在上面已经更新了，你可以从上面代码找出来
+                G = G_new
                 tri = tri_new
 
-        self.G = Z_new
+        self.G = Z_new  # 得到最后的Z值，更新到我们论文算法的G上,有两个G,我们要用哪一个？
 
 
 
@@ -230,7 +249,7 @@ if __name__ == "__main__":
 
     name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
 
-    i = 3
+    i = 0
     data.generate_genes_data(num=i)
 
     print()

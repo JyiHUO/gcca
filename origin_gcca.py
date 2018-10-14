@@ -112,8 +112,8 @@ if __name__ == "__main__":
 #    # gene data
     name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
 
-    i = 3
-    data.generate_genes_data(num=i)
+    i = 1
+    data.generate_genes_data(num=i, random_state=4)
 
     print()
     print("finish reading data: ", name[i])
