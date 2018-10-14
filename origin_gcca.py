@@ -112,7 +112,7 @@ if __name__ == "__main__":
 #    # gene data
     name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
 
-    i = 1
+    i = 5
     data.generate_genes_data(num=i, random_state=4)
 
     print()
@@ -133,7 +133,6 @@ if __name__ == "__main__":
 
     print()
     print()
-#    clf.save_U("gcca_gene")
 
     # three views data for tfidf language data
 
