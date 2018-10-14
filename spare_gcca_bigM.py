@@ -9,9 +9,8 @@ import scipy.io as sco
 import pickle
 from data_class import *
 from metric import *
-from numpy import linalg as LA
 
-class spare_gcca_admm(metric):
+class spare_gcca(metric):
 
     def __init__(self, ds, m_rank=0, mu_x = None):
         '''
@@ -113,112 +112,48 @@ class spare_gcca_admm(metric):
             A[i] = A[i].T
             B[i] = np.linalg.pinv(sigama).dot(B[i].dot(self.G))
 
-        return A, B
+        big_A_D1 = 0
+        big_A_D2 = 0
+        for i in range(len(self.list_view)):
+            DA1, DA2 = A[i].shape
+            big_A_D1 += DA1
+            big_A_D2 += DA2
+
+        big_A = np.zeros(shape=(big_A_D1, big_A_D2))
+        big_B = np.concatenate(B, axis=0)
+
+        row_index_A = 0
+        col_index_A = 0
+        for i in range(len(self.list_view)):
+            DA1, DA2 = A[i].shape
+            big_A[row_index_A:row_index_A + DA1, col_index_A:col_index_A + DA2] = A[i]
+
+            row_index_A += DA1
+            col_index_A += DA2
 
 
-    def solve_u(self, verbose = False):
+        return big_A, big_B
+
+
+
+
+    def solve(self, verbose = False):
         # cal G
         self.solve_g()
         # self.G = self.G.T
 
         A, B = self.cal_A_B()
 
+        U = self.linearized_bregman(A, B, self.mu_x, verbose=verbose)
 
-        for i in range(len(B)):
-            U = self.linearized_bregman(A[i], B[i],self.mu_x[i], verbose=verbose)
-
-            self.list_U.append(U)
-
-            if verbose:
-                print()
-                print("next view: ")
-                print()
-
-    def solve(self):
-        self.solve_u()
-        self.admm()
-
-        number_of_views = len(self.list_view)
-        for i in range(number_of_views):
-            projected_data = self.list_view[i].transpose().dot(self.list_U[i])
-
-            self.list_projection.append(np.array(projected_data))
-
-    def cal_A_B_admm(self):
-        '''
-        Calculate common space of G and some necessary variable
-        :param list_view: [view1, view2 ...] view shape:(D, N)
-        :return: matrix G, list A , list B
-        '''
-
-        A = []
-        B = []
-        S = []
-
-        for i, view in enumerate(self.list_view):
-            p, s, q = np.linalg.svd(view, full_matrices=False)
-
-            A.append(p)
-            B.append(q)
-            S.append(s)
-
-            # cal A and B
-            n = S[i].shape[0]
-            sigama = np.zeros((n, n))
-            sigama[np.arange(n), np.arange(n)] = S[i]
-            A[i] = A[i].T
-            B[i] = np.linalg.pinv(sigama).dot(B[i])
-
-        return A, B
-
-    def admm(self):
-
-        # initialize
-        muta = 0.01
-        beta_max = 10
-        Z_new = None
-        tor = 0.1
-        p = 1.1
-
-        A, B = self.cal_A_B_admm()
-
-
-        for i in range(len(B)):
-            tri = 0
-            beta = 1 / LA.norm(A[i].T.dot(B[i]), ord=np.inf)
-            while True:
-
-                # update Z
-                temp = B[i].T.dot(tri / beta - A[i].dot(self.list_U[i]) )
-
-                U, S, V = np.linalg.svd(temp, full_matrices=False)
-                Z_new = U.dot(V)
-
-                # update G
-                x = self.list_U[i] - muta*A[i].T.dot(
-                    A[i].dot(self.list_U[i]) + B[i].dot(Z_new) - tri/beta
-                )
-                mu = muta/beta
-                G_new = np.sign(x) * np.maximum(np.abs(x) - mu, 0)
-
-                # update tri
-                tri_new = tri - beta*( A[i].dot(G_new) + B[i].dot(Z_new) )
-
-                # update beta
-                beta = min(beta_max, p*beta)
-
-                # judgement
-                left = beta * LA.norm(G_new - self.list_U[i], ord="fro") / max(1, LA.norm(self.list_U[i], ord="fro") )
-                right = LA.norm(tri_new - tri, ord="fro") / beta
-                if left < tor and right < tor:
-                    self.list_U[i] = G_new
-                    tri = tri_new
-                    break
-
-                self.list_U[i] = G_new
-                tri = tri_new
-
-        self.G = Z_new
+        selected_index = 0
+        for i in range(len(self.list_view)):  # (D,N)
+            selected_d = self.list_view[i].shape[0]
+            U_selected = U[selected_index:selected_index+selected_d, :]
+            projected_data = self.list_view[i].transpose().dot(U_selected)
+            self.list_U.append(U_selected)
+            self.list_projection.append(projected_data)
+            selected_index += selected_d
 
 
     def linearized_bregman(self, A, B, mu_x, verbose=True):
@@ -264,15 +199,21 @@ class spare_gcca_admm(metric):
 
         return X
 
+
+# def save_U(clf, name):
+#     with open("../gcca_data/weight/"+name+".pickle", "wb") as f:
+#         pickle.dump(clf.list_U, f)
+
+
 if __name__ == "__main__":
     data = data_generate()
-    clf_ = spare_gcca_admm
+    clf_ = spare_gcca
 #
 #    # gene data
-    mu_x = (20, 20)
+    mu_x = 20
     name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
 
-    i = 3
+    i = 0
     data.generate_genes_data(num=i)
 
     print()
@@ -294,3 +235,43 @@ if __name__ == "__main__":
 
     print()
     print()
+#
+#     clf.save_U("sgcca_gene")
+
+    # three views data for tfidf language data
+
+#    data.generate_three_view_tfidf_dataset()
+#
+#
+#    mu_x = (10, 10, 10)
+#    clf = clf_(ds=data, m_rank=20, mu_x = mu_x)
+#    clf.solve()
+#
+#    # calculate all kind of metric
+#    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+#    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+#    print("each view's spare of U is ", clf.cal_spare())
+#    print("total sqare is: ", np.mean(clf.cal_spare()))
+#
+#    print()
+#    print()
+
+
+#
+   # for synthetic data
+   #  mu_x = (10,10,10)
+   #
+   #  data.generate_synthetic_dataset()
+   #
+   #  clf = clf_(ds=data, m_rank=1, mu_x = mu_x)
+   #  clf.solve()
+   #
+   #  # calculate all kind of metric
+   #  print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+   #  print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+   #  print("each view's spare of U is ", clf.cal_spare())
+   #  print("total sqare is: ", np.mean(clf.cal_spare()))
+   #
+   #  print()
+   #  print()
+   #  clf.save_U("sgcca_synthetic")
