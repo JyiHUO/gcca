@@ -108,34 +108,35 @@ class gcca(metric):
 if __name__ == "__main__":
     data = data_generate()
     clf_ = gcca
-#
-#    # gene data
-    name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
 
-    i = 5
-    data.generate_genes_data(num=i, random_state=4)
-
-    print()
-    print("finish reading data: ", name[i])
-    print()
-
-    # train gcca model
-    clf = clf_(ds=data, m_rank=1)
-    clf.solve()
-
-    v1_test, v2_test = clf.transform(data.test_data)
-    print("total correlation in training data is: ", np.sum(clf.cal_correlation(clf.list_projection)))
-    print("total correlation in testing data is: ", np.sum(clf.cal_correlation([v1_test, v2_test])))
-    print("training data ACC is: ", clf.cal_acc(clf.list_projection))
-    print("testing data ACC is: ", clf.cal_acc([v1_test, v2_test]))
-    print("each view's spare of U is ", clf.cal_spare())
-    print("total sqare is: ", clf.cal_spare()[0])
-
-    print()
-    print()
+    #
+    # # gene data
+    # name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
+    #
+    # i = 5
+    # data.generate_genes_data(num=i, random_state=4)
+    #
+    # print()
+    # print("finish reading data: ", name[i])
+    # print()
+    #
+    # # train gcca model
+    # clf = clf_(ds=data, m_rank=1)
+    # clf.solve()
+    #
+    # v1_test, v2_test = clf.transform(data.test_data)
+    # print("total correlation in training data is: ", np.sum(clf.cal_correlation(clf.list_projection)))
+    # print("total correlation in testing data is: ", np.sum(clf.cal_correlation([v1_test, v2_test])))
+    # print("training data ACC is: ", clf.cal_acc(clf.list_projection))
+    # print("testing data ACC is: ", clf.cal_acc([v1_test, v2_test]))
+    # print("each view's spare of U is ", clf.cal_spare())
+    # print("total sqare is: ", clf.cal_spare()[0])
+    #
+    # print()
+    # print()
 
     # three views data for tfidf language data
-
+    #
     # data.generate_three_view_tfidf_dataset()
     #
     # clf = clf_(ds=data, m_rank=20)
@@ -151,19 +152,37 @@ if __name__ == "__main__":
     # print()
 
 
-#
-#    # for synthetic data
-#     data.generate_synthetic_dataset()
-#
-#     clf = clf_(ds=data, m_rank=1)
-#     clf.solve()
-#
-#     # calculate all kind of metric
-#     print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
-#     print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
-#     print("each view's spare of U is ", clf.cal_spare())
-#     print("total sqare is: ", np.mean(clf.cal_spare()))
-#
-#     print()
-#     print()
-#     clf.save_U("gcca_synthetic")
+    #
+    # # for synthetic data
+    # data.generate_synthetic_dataset()
+    #
+    # clf = clf_(ds=data, m_rank=1)
+    # clf.solve()
+    #
+    # # calculate all kind of metric
+    # print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+    # print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+    # print("each view's spare of U is ", clf.cal_spare())
+    # print("total sqare is: ", np.mean(clf.cal_spare()))
+    #
+    # print()
+    # print()
+    # clf.save_U("gcca_synthetic")
+
+
+    # multi view data ["eng", "tur", "epo",]
+    data.generate_multi_view_tfidf_dataset()
+
+    clf = clf_(ds=data, m_rank=20)
+    clf.solve()
+
+    # calculate all kind of metric
+    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
+    print("each view's spare of U is ", clf.cal_spare())
+    print("total sqare is: ", np.mean(clf.cal_spare()))
+
+    print()
+    print()
+
+

@@ -19,20 +19,6 @@ class data_generate:
         self.test_data = None
 
 
-    # def en_es_fr(self, row = 800, normalize = False):
-    #     if row == 800:
-    #         v1 = pd.read_csv("../gcca_data/csv_data/en800data.csv", encoding = "ISO-8859-1").values
-    #         v2 = pd.read_csv("../gcca_data/csv_data/es800data.csv", encoding = "ISO-8859-1").values
-    #     else:
-    #         v1 = pd.read_csv("../gcca_data/csv_data/en1000data.csv", encoding = "ISO-8859-1").values
-    #         v2 = pd.read_csv("../gcca_data/csv_data/fr1000data.csv", encoding = "ISO-8859-1").values
-    #
-    #     if normalize:
-    #         self._center_norm([v1, v2])
-    #     v1_train, v1_test, v2_train, v2_test = train_test_split(v1, v2, test_size = 0.8, random_state = 42)
-    #
-    #     self.train_data = [v1_train, v2_train]
-    #     self.test_data = [v1_test, v2_test]
 
     def generate_genes_data(self,num=0, normalize=False, random_state = 42):
         Srbct = sco.loadmat("../gcca_data/genes_data/Srbct.mat")
@@ -101,6 +87,19 @@ class data_generate:
 
         self.train_data = [val[i][index_train, :] for i in range(3)]
         self.test_data = [val[i][index_test, :] for i in range(3)]
+
+    def generate_multi_view_tfidf_dataset(self):
+        with open("../gcca_data/multi_language/million_multi_lang.pickle", 'rb') as f:
+            data_dict = pickle.load(f)
+
+        val = list(data_dict.values())
+
+
+        index = np.arange(val[0].shape[0])
+        index_train, index_test = train_test_split(index, test_size=0.5, random_state=42)
+
+        self.train_data = [val[i][index_train, :] for i in range(len(data_dict))]
+        self.test_data = [val[i][index_test, :] for i in range(len(data_dict))]
 
     def generate_synthetic_dataset(self):
         v1 = np.concatenate([np.ones(1000), np.ones(2000)*-1, np.zeros(7000)]).reshape((-1, 1))
