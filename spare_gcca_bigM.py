@@ -259,7 +259,7 @@ if __name__ == "__main__":
 
 
     # # synthetic data
-    # mu_x = (10,10,10)
+    # mu_x = 20
     #
     # data.generate_synthetic_dataset()
     #
@@ -277,9 +277,9 @@ if __name__ == "__main__":
 
 
     # multi view data ["eng", "tur", "epo",]
-    data.generate_three_view_tfidf_dataset()
+    data.generate_multi_view_tfidf_dataset()
 
-    mu_x = (10, 10, 10)
+    mu_x = 20
     clf = clf_(ds=data, m_rank=20, mu_x = mu_x)
     clf.solve()
 

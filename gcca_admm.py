@@ -80,17 +80,6 @@ class gcca_admm(metric):
 
         return big_A, big_B
 
-    # def solve_u(self):
-    #     number_of_views = len(self.list_view)
-    #
-    #     # cal G
-    #     self.solve_g()
-    #     print (self.G.shape)
-    #
-    #     for i in range(number_of_views):
-    #         U = np.linalg.pinv(self.list_view[i].transpose()) * np.mat(self.G)
-    #
-    #         self.list_U.append(np.array(U))
 
     def solve(self):
         # self.solve_u()
@@ -99,7 +88,7 @@ class gcca_admm(metric):
     def admm(self):
 
         # initialize
-        muta = 0.5  # 对应论文代码的delta
+        muta = 1  # 对应论文代码的delta
         beta_max = 1e4  # 最大beta值
         Z_new = None  # 用来存放更新后的Z
         tor1 = 1e-5
@@ -212,30 +201,46 @@ if __name__ == "__main__":
 
     # gene data
 
-    s = time.time()
+    # s = time.time()
+    #
+    # name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
+    #
+    # i = 5
+    # data.generate_genes_data(num=i)
+    #
+    # print()
+    # print("finish reading data: ", name[i])
+    # print()
+    #
+    # # train gcca model
+    # clf = clf_(ds=data, m_rank=1)
+    # clf.solve()
+    #
+    # # calculate all kind of metric
+    # v1_test, v2_test = clf.transform(data.test_data)
+    # print("total correlation in training data is: ", np.sum(clf.cal_correlation(clf.list_projection)))
+    # print("total correlation in testing data is: ", np.sum(clf.cal_correlation([v1_test, v2_test])))
+    # print("training data ACC is: ", clf.cal_acc(clf.list_projection))
+    # print("testing data ACC is: ", clf.cal_acc([v1_test, v2_test]))
+    # print("each view's spare of U is ", clf.cal_spare())
+    # # print("total sqare is: ", clf.cal_spare()[0])
+    #
+    # e = time.time()
+    #
+    # print ("total time is ", e - s)
 
-    name = ['Srbct', 'Leukemia', 'Lymphoma', 'Prostate', 'Brain', 'Colon']
 
-    i = 5
-    data.generate_genes_data(num=i)
+    # multi view lang
+    data.generate_multi_view_tfidf_dataset()
 
-    print()
-    print("finish reading data: ", name[i])
-    print()
-
-    # train gcca model
-    clf = clf_(ds=data, m_rank=1)
+    clf = clf_(ds=data, m_rank=20)
     clf.solve()
 
     # calculate all kind of metric
-    v1_test, v2_test = clf.transform(data.test_data)
-    print("total correlation in training data is: ", np.sum(clf.cal_correlation(clf.list_projection)))
-    print("total correlation in testing data is: ", np.sum(clf.cal_correlation([v1_test, v2_test])))
-    print("training data ACC is: ", clf.cal_acc(clf.list_projection))
-    print("testing data ACC is: ", clf.cal_acc([v1_test, v2_test]))
+    print("reconstruction error of G in training is: ", clf.cal_G_error(data.train_data, test=False))
+    print("reconstruction error of G in testing is: ", clf.cal_G_error(data.test_data, test=True))
     print("each view's spare of U is ", clf.cal_spare())
-    # print("total sqare is: ", clf.cal_spare()[0])
+    print("total sqare is: ", np.mean(clf.cal_spare()))
 
-    e = time.time()
-
-    print ("total time is ", e - s)
+    print()
+    print()
