@@ -48,7 +48,7 @@ def select_id(lang_list, num_entry, sentences, links):
 
 sens, link = read_ff()
 lang_list = ["eng", "tur", "epo", "cmn"]
-num_entry = 1000
+num_entry = 50000
 df = select_id(lang_list=lang_list, num_entry=num_entry, sentences=sens, links=link)
 
 name = "_".join(lang_list)
